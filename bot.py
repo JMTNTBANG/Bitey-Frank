@@ -2,6 +2,8 @@ import discord
 from dotenv import load_dotenv
 from os import getenv
 from random import choice as randItem
+import os
+import commands
 
 
 class buttonRole:
@@ -36,17 +38,23 @@ def start():
     intents.members = True
     intents.message_content = True
 
-    # Set Client Variable
+    # Set Client Variables
     global client
+    global tree
     client = discord.Client(intents=intents)
+    tree = discord.app_commands.CommandTree(client)
 
     # Set Dynamic Variables
     global channels
     global roles
     global emojis
+    global assets
+    global importedCommands
     channels = []
     roles = {}
     emojis = {}
+    assets = []
+    importedCommands = []
 
     # Set Static Variables
     global frankMojis
@@ -114,12 +122,22 @@ def start():
         for guild in client.guilds:
             for emoji in guild.emojis:
                 emojis[f':{emoji.name}:'] = emoji
-        print(emojis)
+
+        # # Command Import
+        # for command in os.listdir('commands'):
+            # for command in os.listdir('commands'):
+            #     if command.endswith('py'):
+            #         if '__init__.py' not in command:
+            #             if 'template.py' not in command:
+            #                 if command not in importedCommands:
+            #                     exec(f'import commands.{command[:-3]}')
+            #                     exec(f'commands.{command[:-3]}.import_command()')
+            #                     importedCommands.append(command)
+        await tree.sync()
+        
         # Send Button Roles
         for guild in client.guilds:
-            print(f'checking {guild}')
             for channel in guild.text_channels:
-                print(f'checking {channel}')
                 if channel.topic != None:
                     if 'Button Roles' in channel.topic:
                         print('valid channel')
@@ -180,6 +198,11 @@ def start():
                         ]
                         await sendButtonRoles(pingRoles, channel, 'Click a Button to choose from various *Ping Roles*')
                         await sendButtonRoles(tonaRoles, channel, 'Click a Button to choose from various *Tona Roles*')
+
+        # Import Assets
+        for asset in os.listdir('assets'):
+            if asset.endswith(['jpg','jpeg','png','webp','gif']):
+                assets.append(asset)
 
     @client.event
     async def on_member_join(member):
