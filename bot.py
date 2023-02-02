@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from os import getenv
 from random import choice as randItem
 import os
-import commands
+from commands import *
 
 
 class buttonRole:
@@ -20,8 +20,10 @@ class buttonRole:
             self.style = discord.ButtonStyle.danger
         elif style.lower() == 'link' or style.lower() == 'url':
             self.style = discord.ButtonStyle.link
+        elif style.lower() == 'dropdown':
+            self.style = None
         else:
-            raise NameError
+            raise NameError('Button Style Not Found')
         self.emoji = emoji
 
 
@@ -80,26 +82,54 @@ def start():
                         await channel.send(f'{printEmoji(":frank:")}7 {member.mention}')
                     break
 
-    async def sendButtonRoles(buttonRole: list, channel, message: str):
+    async def sendButtonRoles(buttonRole, channel, message: str, dropdown: bool = False):
         def gen_callback(role):
             async def button_callback(interaction: discord.Interaction):
                 if interaction.user in role.members:
-                    await interaction.user.remove_roles(role) # type: ignore
-                    await interaction.response.send_message(f'Removed Role: `{role.name}`')
+                    await interaction.user.remove_roles(role)  # type: ignore
+                    await interaction.response.send_message(f'Removed Role: `{role.name}`', ephemeral=True)
                 else:
-                    await interaction.user.add_roles(role) # type: ignore
-                    await interaction.response.send_message(f'Added Role: `{role.name}`')
+                    await interaction.user.add_roles(role)  # type: ignore
+                    await interaction.response.send_message(f'Added Role: `{role.name}`', ephemeral=True)
             return button_callback
+        def gen_select_callback(select: discord.ui.Select):
+            async def select_callback(interaction: discord.Interaction):
+                response=''
+                for role in buttonRole:
+                    if interaction.user in role.role.members:
+                        await interaction.user.remove_roles(role.role)  # type: ignore
+                        response+=f'Removed Role: `{role.role.name}`\n'
+                for role in buttonRole:
+                    if select.values[0] == role.label:
+                        if interaction.user in role.role.members:
+                            await interaction.user.remove_roles(role.role)  # type: ignore
+                            response+=f'Removed Role: `{role.role.name}`\n'
+                        else:
+                            await interaction.user.add_roles(role.role)  # type: ignore
+                            response+=f'Added Role: `{role.role.name}`\n'
+                await interaction.response.send_message(response, ephemeral=True)
+            return select_callback
 
-        view = discord.ui.View()
-        for role in buttonRole:
-            button = discord.ui.Button(
-                label=role.label,
-                style=role.style,
-                emoji=role.emoji
-            )
-            button.callback = gen_callback(role.role)
-            view.add_item(button)
+        view = discord.ui.View(timeout=None)
+        if dropdown:
+            select = discord.ui.Select()
+            for role in buttonRole:
+                option = discord.SelectOption(
+                    label=role.label,
+                    emoji=role.emoji
+                )
+                select.append_option(option)
+            view.add_item(select)
+            select.callback = gen_select_callback(select)
+        else:
+            for role in buttonRole:
+                button = discord.ui.Button(
+                    label=role.label,
+                    style=role.style,
+                    emoji=role.emoji
+                )
+                button.callback = gen_callback(role.role)
+                view.add_item(button)
 
         await channel.send(message, view=view)
 
@@ -123,24 +153,23 @@ def start():
             for emoji in guild.emojis:
                 emojis[f':{emoji.name}:'] = emoji
 
-        # # Command Import
-        # for command in os.listdir('commands'):
-            # for command in os.listdir('commands'):
-            #     if command.endswith('py'):
-            #         if '__init__.py' not in command:
-            #             if 'template.py' not in command:
-            #                 if command not in importedCommands:
-            #                     exec(f'import commands.{command[:-3]}')
-            #                     exec(f'commands.{command[:-3]}.import_command()')
-            #                     importedCommands.append(command)
-        await tree.sync()
-        
+        # Command Import
+        for command in os.listdir('commands'):
+            for command in os.listdir('commands'):
+                if command.endswith('py'):
+                    if '__init__.py' not in command:
+                        if 'template.py' not in command:
+                            if command not in importedCommands:
+                                exec(f'import commands.{command[:-3]}')
+                                exec(
+                                    f'commands.{command[:-3]}.import_command()')
+                                importedCommands.append(command)
+
         # Send Button Roles
         for guild in client.guilds:
             for channel in guild.text_channels:
                 if channel.topic != None:
                     if 'Button Roles' in channel.topic:
-                        print('valid channel')
                         await channel.purge()
                         pingRoles = [
                             buttonRole(
@@ -196,13 +225,43 @@ def start():
                                 emoji='🏁'
                             )
                         ]
+                        regionRoles = [
+                            buttonRole(
+                                role=roles['@American Eagles'],
+                                style='Dropdown',
+                                emoji='🇺🇸'
+                            ),
+                            buttonRole(
+                                role=roles['@Tea Sippers'],
+                                style='Dropdown',
+                                emoji='🇬🇧'
+                            ),
+                            buttonRole(
+                                role=roles['@Kangaroos'],
+                                style='Dropdown',
+                                emoji='🇦🇺'
+                            ),
+                            buttonRole(
+                                role=roles['@Meatball Kings'],
+                                style='Dropdown',
+                                emoji='🇸🇪'
+                            ),
+                            buttonRole(
+                                role=roles['@pain'],
+                                style='Dropdown',
+                                emoji='🇪🇸'
+                            )
+                        ]
                         await sendButtonRoles(pingRoles, channel, 'Click a Button to choose from various *Ping Roles*')
                         await sendButtonRoles(tonaRoles, channel, 'Click a Button to choose from various *Tona Roles*')
+                        await sendButtonRoles(regionRoles, channel, 'Choose an item from the Dropdown to choose from various *Region Roles*', dropdown=True)
 
         # Import Assets
         for asset in os.listdir('assets'):
-            if asset.endswith(['jpg','jpeg','png','webp','gif']):
-                assets.append(asset)
+            if asset.endswith(('jpg', 'jpeg', 'png', 'webp', 'gif')):
+                assets.append(f'assets/{asset}')
+
+        await tree.sync()
 
     @client.event
     async def on_member_join(member):
