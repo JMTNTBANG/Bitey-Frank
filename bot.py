@@ -141,19 +141,27 @@ def start():
         if 'debug' in os.listdir('./'):
             await client.change_presence(activity=discord.Game(name="DEBUG MODE"))
             print('Bot Presence changed to \"Playing DEBUG MODE\"')
-            await channels['frank-bot-info'].send(embed=discord.Embed(
-                title='Online Status',
-                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R> <@&1065773538281259009>',
-                color=discord.Color.green()
-                ))
+            for guild in client.guilds:
+                for channel in guild.text_channels:
+                    if channel.topic != None:
+                        if 'Bot Info' in channel.topic:
+                            await channel.send(embed=discord.Embed(
+                                title='Online Status',
+                                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R> <@&1065773538281259009>',
+                                color=discord.Color.green()
+                                ))
         else:
             await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="my stinky poos"))
             print('Bot Presence changed to \"Watching my stinky poos\"')
-            await channels['frank-bot-info'].send(embed=discord.Embed(
-                title='Online Status',
-                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R>',
-                color=discord.Color.green()
-                ))
+            for guild in client.guilds:
+                for channel in guild.text_channels:
+                    if channel.topic != None:
+                        if 'Bot Info' in channel.topic:
+                            await channel.send(embed=discord.Embed(
+                                title='Online Status',
+                                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R>',
+                                color=discord.Color.green()
+                                ))
 
         # Channel Detection
         for guild in client.guilds:
