@@ -271,5 +271,16 @@ def start():
     async def on_member_remove(member):
         await memberStatusUpdate(False, member)
 
+    @client.event
+    async def on_message(message):
+        if client.user in message.mentions:
+            if message.author != client.user:
+                await message.channel.send(printEmoji(randItem(frankMojis)))
+        
+        if 'frank' in message.content.lower():
+            if message.author != client.user:
+                await message.channel.send(printEmoji(randItem(frankMojis)))
+
+
     # Finalize Bot
     client.run(TOKEN)
