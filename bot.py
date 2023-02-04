@@ -4,6 +4,7 @@ from os import getenv
 from random import choice as randItem
 import os
 from commands import *
+import time
 
 
 class buttonRole:
@@ -61,7 +62,7 @@ def start():
     # Set Static Variables
     global frankMojis
     frankMojis = [
-        ':chonkfronk',
+        ':chonkfronk:',
         ':frank3:',
         ':sneakyfrank:',
         ':hideyhole:',
@@ -137,6 +138,22 @@ def start():
     @client.event
     async def on_ready():
         print(f'{client.user} active')
+        if 'debug' in os.listdir('./'):
+            await client.change_presence(activity=discord.Game(name="DEBUG MODE"))
+            print('Bot Presence changed to \"Playing DEBUG MODE\"')
+            await channels['frank-bot-info'].send(embed=discord.Embed(
+                title='Online Status',
+                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R> <@&1065773538281259009>',
+                color=discord.Color.green()
+                ))
+        else:
+            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="my stinky poos"))
+            print('Bot Presence changed to \"Watching my stinky poos\"')
+            await channels['frank-bot-info'].send(embed=discord.Embed(
+                title='Online Status',
+                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R>',
+                color=discord.Color.green()
+                ))
 
         # Channel Detection
         for guild in client.guilds:
