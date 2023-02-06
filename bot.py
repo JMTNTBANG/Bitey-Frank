@@ -5,6 +5,9 @@ from random import choice as randItem
 import os
 from commands import *
 import time
+from youtube_tools import getLatestVideo
+from threading import Thread
+import asyncio
 
 
 class buttonRole:
@@ -36,6 +39,25 @@ def start():
         print('GIMMIE YO GODDAMN TOKEN B***CH')
         exit(1)
 
+    async def checkChannels():
+        async def checker(YTchannel):
+            newLatestVideo = getLatestVideo(f'@{YTchannel}')
+            if f'{YTchannel}.txt' not in os.listdir('./youtube'):
+                open(f'youtube/{YTchannel}.txt', 'x')
+            if f'Title: {newLatestVideo.title} | URL: {newLatestVideo.url} | Timestamp: {newLatestVideo.published}' != open(f'youtube/{YTchannel}.txt', 'r').readline():
+                open(f'youtube/{YTchannel}.txt', 'w').write(f'Title: {newLatestVideo.title} | URL: {newLatestVideo.url} | Timestamp: {newLatestVideo.published}')
+                response = f'{roles[f"@{newLatestVideo.channel} Ping"].mention} New video by {newLatestVideo.channel}! `{newLatestVideo.title}`\nUploaded <t:{int(newLatestVideo.published.timestamp())}:R>\n{newLatestVideo.url}'
+                for guild in client.guilds:
+                    for channel in guild.text_channels:
+                        if channel.topic != None:
+                            if 'YouTube Ping' in channel.topic:
+                                await channel.send(response)
+
+        await checker('DankPods')
+        await checker('GarbageTime420')
+        await checker('the.drum.thing.')
+        
+
     # Set Bot Intents
     intents = discord.Intents.default()
     intents.members = True
@@ -53,11 +75,13 @@ def start():
     global emojis
     global assets
     global importedCommands
+    global rolesLoaded
     channels = []
     roles = {}
     emojis = {}
     assets = []
     importedCommands = []
+    rolesLoaded = False
 
     # Set Static Variables
     global frankMojis
@@ -172,6 +196,8 @@ def start():
         for guild in client.guilds:
             for role in guild.roles:
                 roles[f'@{role.name}'] = role
+        global rolesLoaded
+        rolesLoaded = True
 
         # Emoji Detection
         for guild in client.guilds:
@@ -305,6 +331,9 @@ def start():
         if 'frank' in message.content.lower():
             if message.author != client.user:
                 await message.channel.send(printEmoji(randItem(frankMojis)))
+
+        if rolesLoaded:
+            await checkChannels()
 
 
     # Finalize Bot
