@@ -13,3 +13,4 @@ t:you look like a flower r:shush im shedding so leave me alone <soleavemealone:1
 t:you're looking at yourself r: wait im looking at myself? i thought i was looking at a beautiful godess. meh, whats the difference? u:JMTNTBANG#4201
 t:hates me r:you got that right u:JMTNTBANG#4201
 t:hates you r:hates who? u:JMTNTBANG#4201
+t:what is dominance? r:I AM DOMINANCE! u:A_user#0001
