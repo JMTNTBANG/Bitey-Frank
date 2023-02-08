@@ -2,12 +2,14 @@ import discord
 from dotenv import load_dotenv
 from os import getenv
 from random import choice as randItem
+from random import randint
 import os
 from commands import *
 import time
 from youtube_tools import getLatestVideo
 from threading import Thread
 import asyncio
+import requests
 
 
 class buttonRole:
@@ -30,6 +32,19 @@ class buttonRole:
             raise NameError('Button Style Not Found')
         self.emoji = emoji
 
+class webhook:
+    def __init__(self, content, username, avatar, url, embeds=None, attachments=None,) -> None:
+        self.content = content
+        self.username = username
+        self.avatar = avatar
+        self.url = url
+        if embeds != None: self.embeds = embeds
+        if attachments != None: self.attachments = attachments
+        self.json = {
+            "content": self.content,
+            "username": self.username,
+            "avatar_url": self.avatar
+        }
 
 def start():
     # Load Token
@@ -46,7 +61,7 @@ def start():
                 open(f'youtube/{YTchannel}.txt', 'x')
             if f'Title: {newLatestVideo.title} | URL: {newLatestVideo.url} | Timestamp: {newLatestVideo.published}' != open(f'youtube/{YTchannel}.txt', 'r').readline():
                 open(f'youtube/{YTchannel}.txt', 'w').write(f'Title: {newLatestVideo.title} | URL: {newLatestVideo.url} | Timestamp: {newLatestVideo.published}')
-                response = f'{roles[f"@{newLatestVideo.channel} Ping"].mention} New video by {newLatestVideo.channel}! `{newLatestVideo.title}`\nUploaded <t:{int(newLatestVideo.published.timestamp())}:R>\n{newLatestVideo.url}'
+                response = f'{roles[f"@{newLatestVideo.channel} Ping"].mention} New video by {newLatestVideo.channel}! `{newLatestVideo.title}`\nUploaded <t:{int(time.time())}:R>\n{newLatestVideo.url}'
                 for guild in client.guilds:
                     for channel in guild.text_channels:
                         if channel.topic != None:
@@ -323,14 +338,64 @@ def start():
         await memberStatusUpdate(False, member)
 
     @client.event
-    async def on_message(message):
+    async def on_message(message: discord.Message):
         if client.user in message.mentions:
             if message.author != client.user:
                 await message.channel.send(printEmoji(randItem(frankMojis)))
         
         if 'frank' in message.content.lower():
-            if message.author != client.user:
-                await message.channel.send(printEmoji(randItem(frankMojis)))
+            f = open('messageResponses.txt', 'r')
+            global yes
+            yes = False
+            for x in f:
+                trigger = x[x.find('t:')+2:x.find('r:')-1]
+                response = x[x.find('r:')+2:x.find('u:')-1]
+                if trigger in message.content.lower():
+                    if message.author != client.user:
+                        async with message.channel.typing():
+                            await asyncio.sleep(len(response)/5)
+                        if message.channel.last_message == message:
+                            await message.channel.send(response)
+                        else:
+                            await message.reply(response)
+                        yes = True
+            if not yes:
+                if message.author != client.user:
+                    await message.channel.send(printEmoji(randItem(frankMojis)))
+            f.close()
+
+        if message.guild is None and not message.author.bot:
+            global threadExists
+            threadExists = False
+            for guild in client.guilds:
+                for channel in guild.text_channels:
+                    if channel.topic != None:
+                        if 'DMs' in channel.topic:
+                            for thread in channel.threads:
+                                if thread.name == f'{message.author.name}#{message.author.discriminator}':
+                                    threadExists = True
+                                    global threadd
+                                    threadd = thread
+                            if threadExists == False:
+                                newThread = await channel.send(f'`Beginning of Conversation with {message.author.name}`')
+                                threadd = await channel.create_thread(name=f'{message.author.name}#{message.author.discriminator}',message=newThread)
+                            DMWebhook = webhook(content=message.content, username=message.author.name, avatar=message.author.avatar.url, url=f'https://discord.com/api/webhooks/1072723874648690748/4lkka6Rs41p1xV5r8Jfq2Qbsh16tQ0hrJboMF73BiQwbEqJrmTrbdvACHVZFDMEu1bCC?thread_id={threadd.id}')
+                            requests.post(DMWebhook.url,DMWebhook.json)
+        if not message.author.bot:
+            for guild in client.guilds:
+                    for channel in guild.text_channels:
+                        if channel.topic != None:
+                            if 'DMs' in channel.topic:
+                                for thread in channel.threads:
+                                    async for threadMessage in thread.history():
+                                        if message == threadMessage:
+                                            dm=await guild.get_member_named(thread.name).create_dm()
+                                            async with dm.typing():
+                                                await asyncio.sleep(len(message.content)/5)
+                                            await dm.send(message.content)
+                                            break
+
+
 
         if rolesLoaded:
             await checkChannels()
