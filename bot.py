@@ -355,9 +355,9 @@ def start():
                         async with message.channel.typing():
                             await asyncio.sleep(len(response)/5)
                         if message.channel.last_message == message:
-                            await message.channel.send(response)
+                            await message.channel.send(f'{response}')
                         else:
-                            await message.reply(response)
+                            await message.reply(f'{response}')
                         yes = True
             if not yes:
                 if message.author != client.user:
