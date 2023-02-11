@@ -61,7 +61,7 @@ def start():
                 open(f'youtube/{YTchannel}.txt', 'x')
             if f'Title: {newLatestVideo.title} | URL: {newLatestVideo.url} | Timestamp: {newLatestVideo.published}' != open(f'youtube/{YTchannel}.txt', 'r').readline():
                 open(f'youtube/{YTchannel}.txt', 'w').write(f'Title: {newLatestVideo.title} | URL: {newLatestVideo.url} | Timestamp: {newLatestVideo.published}')
-                response = f'{roles[f"@{newLatestVideo.channel} Ping"].mention} New video by {newLatestVideo.channel}! `{newLatestVideo.title}`\nUploaded <t:{int(time.time())}:R>\n{newLatestVideo.url}'
+                response = f'{roles[f"@{newLatestVideo.channel} Ping"].mention} New video by {newLatestVideo.channel}! `{newLatestVideo.title}`\nUploaded <t:{int(newLatestVideo.published.timestamp()-21600)}:R>\n{newLatestVideo.url}'
                 for guild in client.guilds:
                     for channel in guild.text_channels:
                         if channel.topic != None:
