@@ -350,25 +350,25 @@ def start():
                 await message.channel.send(printEmoji(randItem(frankMojis)))
         
         if 'frank' in message.content.lower():
-                snarks = open('snarks.txt', 'r')
-                global yes
-                yes = False
-                for snark in snarks:
-                    trigger = snark[snark.find('t:')+2:snark.find('r:')-1]
-                    response = snark[snark.find('r:')+2:snark.find('u:')-1]
-                    if trigger in message.content.lower():
-                        if message.author != client.user:
-                            async with message.channel.typing():
-                                await asyncio.sleep(len(response)/5)
-                            if message.channel.last_message == message:
-                                await message.channel.send(response)
-                            else:
-                                await message.reply(response)
-                            yes = True
-                if not yes:
+            f = open('messageResponses.txt', 'r')
+            global yes
+            yes = False
+            for x in f:
+                trigger = x[x.find('t:')+2:x.find('r:')-1]
+                response = x[x.find('r:')+2:x.find('u:')-1]
+                if trigger in message.content.lower():
                     if message.author != client.user:
-                        await message.channel.send(printEmoji(randItem(frankMojis)))
-                snarks.close()
+                        async with message.channel.typing():
+                            await asyncio.sleep(len(response)/5)
+                        if message.channel.last_message == message:
+                            await message.channel.send(f'{response}')
+                        else:
+                            await message.reply(f'{response}')
+                        yes = True
+            if not yes:
+                if message.author != client.user:
+                    await message.channel.send(printEmoji(randItem(frankMojis)))
+            f.close()
 
         if message.guild is None and not message.author.bot:
             global threadExists
