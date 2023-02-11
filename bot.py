@@ -72,6 +72,7 @@ def start():
         await checker('GarbageTime420')
         await checker('the.drum.thing.')
         await checker('JMTNTBANG')
+        await checker('joshdoesntplaydrums')
         
 
     # Set Bot Intents
@@ -273,6 +274,11 @@ def start():
                                 role=roles['@JMTNTBANG Ping'],
                                 style='gray',
                                 emoji=printEmoji(':JMTNTBANG:')
+                            ),
+                            buttonRole(
+                                role=roles['@Josh Doesn\'t Play Drums Ping'],
+                                style='gray',
+                                emoji=printEmoji(':joshdoesntplaydrums:')
                             ),
                             buttonRole(
                                 role=roles['@Poll Ping'],
