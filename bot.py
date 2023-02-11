@@ -71,6 +71,7 @@ def start():
         await checker('DankPods')
         await checker('GarbageTime420')
         await checker('the.drum.thing.')
+        await checker('JMTNTBANG')
         
 
     # Set Bot Intents
@@ -178,8 +179,8 @@ def start():
     async def on_ready():
         print(f'{client.user} active')
         if 'debug' in os.listdir('./'):
-            await client.change_presence(activity=discord.Game(name="DEBUG MODE"))
-            print('Bot Presence changed to \"Playing DEBUG MODE\"')
+            await client.change_presence(activity=discord.Game(name="Vet Simulator"),status=discord.Status.dnd)
+            print('Bot Presence changed to \"Playing Vet Simulator\"')
             for guild in client.guilds:
                 for channel in guild.text_channels:
                     if channel.topic != None:
@@ -269,6 +270,11 @@ def start():
                                 emoji=printEmoji(':drumthing:')
                             ),
                             buttonRole(
+                                role=roles['@JMTNTBANG Ping'],
+                                style='gray',
+                                emoji=printEmoji(':JMTNTBANG:')
+                            ),
+                            buttonRole(
                                 role=roles['@Poll Ping'],
                                 style='gray',
                                 emoji='📊'
@@ -293,7 +299,7 @@ def start():
                         ]
                         regionRoles = [
                             buttonRole(
-                                role=roles['@American Eagles'],
+                                role=roles['@Freedom Eagles'],
                                 style='Dropdown',
                                 emoji='🇺🇸'
                             ),
@@ -344,25 +350,25 @@ def start():
                 await message.channel.send(printEmoji(randItem(frankMojis)))
         
         if 'frank' in message.content.lower():
-            f = open('messageResponses.txt', 'r')
-            global yes
-            yes = False
-            for x in f:
-                trigger = x[x.find('t:')+2:x.find('r:')-1]
-                response = x[x.find('r:')+2:x.find('u:')-1]
-                if trigger in message.content.lower():
+                snarks = open('snarks.txt', 'r')
+                global yes
+                yes = False
+                for snark in snarks:
+                    trigger = snark[snark.find('t:')+2:snark.find('r:')-1]
+                    response = snark[snark.find('r:')+2:snark.find('u:')-1]
+                    if trigger in message.content.lower():
+                        if message.author != client.user:
+                            async with message.channel.typing():
+                                await asyncio.sleep(len(response)/5)
+                            if message.channel.last_message == message:
+                                await message.channel.send(response)
+                            else:
+                                await message.reply(response)
+                            yes = True
+                if not yes:
                     if message.author != client.user:
-                        async with message.channel.typing():
-                            await asyncio.sleep(len(response)/5)
-                        if message.channel.last_message == message:
-                            await message.channel.send(response)
-                        else:
-                            await message.reply(response)
-                        yes = True
-            if not yes:
-                if message.author != client.user:
-                    await message.channel.send(printEmoji(randItem(frankMojis)))
-            f.close()
+                        await message.channel.send(printEmoji(randItem(frankMojis)))
+                snarks.close()
 
         if message.guild is None and not message.author.bot:
             global threadExists

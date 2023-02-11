@@ -3,3 +3,5 @@
 __pycache__/*
 debug
 *.pyc
+youtube/*
+snarks.txt
