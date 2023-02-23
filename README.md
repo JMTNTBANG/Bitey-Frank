@@ -28,11 +28,12 @@ Once Pip is installed use it to install the following:
 ## Configuration
 
 In order to make the bot function, you will need a discord bot TOKEN (If you do not have a discord bot make one **[Here](https://discord.com/developers/applications)**)
-
-Next create a `.env` file to the top of the directory, then paste the following inside the file:
+<br />
+<br />
+Then with your newly aquired Bot Token, create a `.env` file to the top of the directory, then paste the following inside the file:
 - `TOKEN=<Your Token Here>`
 
-
+After that, add the dice emojis to the server where Frank will reside (These are located inside `/assets/die-emojis`)
 
 ## Development
 
