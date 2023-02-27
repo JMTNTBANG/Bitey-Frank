@@ -10,6 +10,11 @@ from youtube_tools import getLatestVideo
 from threading import Thread
 import asyncio
 import requests
+import re
+
+
+# Regex to match frank with repeated characters
+FRAAAANNNKKK_REGEX = re.compile(r"f+r+a+n+k+")
 
 
 class buttonRole:
@@ -73,7 +78,7 @@ def start():
         await checker('the.drum.thing.')
         await checker('JMTNTBANG')
         await checker('joshdoesntplaydrums')
-        
+
 
     # Set Bot Intents
     intents = discord.Intents.default()
@@ -358,8 +363,8 @@ def start():
         if client.user in message.mentions:
             if message.author != client.user:
                 await message.channel.send(printEmoji(randItem(frankMojis)))
-        
-        if 'frank' in message.content.lower():
+
+        if FRAAAANNNKKK_REGEX.match(message.content.casefold()):
                 snarks = open('snarks.txt', 'r')
                 global yes
                 yes = False
