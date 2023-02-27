@@ -364,7 +364,7 @@ def start():
             if message.author != client.user:
                 await message.channel.send(printEmoji(randItem(frankMojis)))
 
-        if FRAAAANNNKKK_REGEX.match(message.content.casefold()):
+        if FRAAAANNNKKK_REGEX.search(message.content.casefold()) is not None:
                 snarks = open('snarks.txt', 'r')
                 global yes
                 yes = False
