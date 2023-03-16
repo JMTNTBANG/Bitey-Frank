@@ -9,7 +9,7 @@ Have the following installed on your system:
 1. **[Python 3.10+](https://www.python.org/downloads/)**
 2. **[Pip](https://pip.pypa.io/en/stable/installation/)**
 
-3. And an IDE of your own choice (**[VS-Code](https://code.visualstudio.com/)** is recommended)
+3. And an IDE of your own choice (**[PyCharm](https://www.jetbrains.com/pycharm/)** or **[VS-Code](https://code.visualstudio.com/)** is recommended)
 
 
 

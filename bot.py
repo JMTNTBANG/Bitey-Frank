@@ -1,17 +1,15 @@
-import discord
-from dotenv import load_dotenv
+import asyncio
+import os
+import re
+import time
 from os import getenv
 from random import choice as randItem
-from random import randint
-import os
-from commands import *
-import time
-from youtube_tools import getLatestVideo
-from threading import Thread
-import asyncio
-import requests
-import re
 
+import discord
+import requests
+from dotenv import load_dotenv
+
+from youtube_tools import getLatestVideo
 
 # Regex to match frank with repeated characters
 FRAAAANNNKKK_REGEX = re.compile(r"f+r+a+n+k+")
@@ -242,106 +240,106 @@ def start():
                                     f'commands.{command[:-3]}.import_command()')
                                 importedCommands.append(command)
 
-        # Send Button Roles
-        for guild in client.guilds:
-            for channel in guild.text_channels:
-                if channel.topic != None:
-                    if 'Button Roles' in channel.topic:
-                        await channel.purge()
-                        pingRoles = [
-                            buttonRole(
-                                role=roles['@General Announcement Ping'],
-                                style='gray',
-                                emoji='🔔'
-                            ),
-                            buttonRole(
-                                role=roles['@DankPods Ping'],
-                                style='gray',
-                                emoji=printEmoji(':dankpods:')
-                            ),
-                            buttonRole(
-                                role=roles['@Garbage Time Ping'],
-                                style='gray',
-                                emoji=printEmoji(':tony:')
-                            ),
-                            buttonRole(
-                                role=roles['@Garbage Stream Morn Ping'],
-                                style='gray',
-                                emoji=printEmoji(':chonkfronk:')
-                            ),
-                            buttonRole(
-                                role=roles['@Garbage Stream Arvo Ping'],
-                                style='gray',
-                                emoji=printEmoji(':shrek:')
-                            ),
-                            buttonRole(
-                                role=roles['@The Drum Thing Ping'],
-                                style='gray',
-                                emoji=printEmoji(':drumthing:')
-                            ),
-                            buttonRole(
-                                role=roles['@JMTNTBANG Ping'],
-                                style='gray',
-                                emoji=printEmoji(':JMTNTBANG:')
-                            ),
-                            buttonRole(
-                                role=roles['@Josh Doesn\'t Play Drums Ping'],
-                                style='gray',
-                                emoji=printEmoji(':joshdoesntplaydrums:')
-                            ),
-                            buttonRole(
-                                role=roles['@Poll Ping'],
-                                style='gray',
-                                emoji='📊'
-                            )
-                        ]
-                        tonaRoles = [
-                            buttonRole(
-                                role=roles['@OG Tona'],
-                                style='gray',
-                                emoji=printEmoji(':tonatime:')
-                            ),
-                            buttonRole(
-                                role=roles['@Sky Hihi'],
-                                style='gray',
-                                emoji='☁️'
-                            ),
-                            buttonRole(
-                                role=roles['@Rollo Finito'],
-                                style='gray',
-                                emoji='🏁'
-                            )
-                        ]
-                        regionRoles = [
-                            buttonRole(
-                                role=roles['@Freedom Eagles'],
-                                style='Dropdown',
-                                emoji='🇺🇸'
-                            ),
-                            buttonRole(
-                                role=roles['@Tea Sippers'],
-                                style='Dropdown',
-                                emoji='🇬🇧'
-                            ),
-                            buttonRole(
-                                role=roles['@Kangaroos'],
-                                style='Dropdown',
-                                emoji='🇦🇺'
-                            ),
-                            buttonRole(
-                                role=roles['@Meatball Kings'],
-                                style='Dropdown',
-                                emoji='🇸🇪'
-                            ),
-                            buttonRole(
-                                role=roles['@pain'],
-                                style='Dropdown',
-                                emoji='🇪🇸'
-                            )
-                        ]
-                        await sendButtonRoles(pingRoles, channel, 'Click a Button to choose from various *Ping Roles*')
-                        await sendButtonRoles(tonaRoles, channel, 'Click a Button to choose from various *Tona Roles*')
-                        await sendButtonRoles(regionRoles, channel, 'Choose an item from the Dropdown to choose from various *Region Roles*', dropdown=True)
+        # Send Button Roles (Disabled)
+        # for guild in client.guilds:
+        #     for channel in guild.text_channels:
+        #         if channel.topic != None:
+        #             if 'Button Roles' in channel.topic:
+        #                 await channel.purge()
+        #                 pingRoles = [
+        #                     buttonRole(
+        #                         role=roles['@General Announcement Ping'],
+        #                         style='gray',
+        #                         emoji='🔔'
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@DankPods Ping'],
+        #                         style='gray',
+        #                         emoji=printEmoji(':dankpods:')
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Garbage Time Ping'],
+        #                         style='gray',
+        #                         emoji=printEmoji(':tony:')
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Garbage Stream Morn Ping'],
+        #                         style='gray',
+        #                         emoji=printEmoji(':chonkfronk:')
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Garbage Stream Arvo Ping'],
+        #                         style='gray',
+        #                         emoji=printEmoji(':shrek:')
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@The Drum Thing Ping'],
+        #                         style='gray',
+        #                         emoji=printEmoji(':drumthing:')
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@JMTNTBANG Ping'],
+        #                         style='gray',
+        #                         emoji=printEmoji(':JMTNTBANG:')
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Josh Doesn\'t Play Drums Ping'],
+        #                         style='gray',
+        #                         emoji=printEmoji(':joshdoesntplaydrums:')
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Poll Ping'],
+        #                         style='gray',
+        #                         emoji='📊'
+        #                     )
+        #                 ]
+        #                 tonaRoles = [
+        #                     buttonRole(
+        #                         role=roles['@OG Tona'],
+        #                         style='gray',
+        #                         emoji=printEmoji(':tonatime:')
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Sky Hihi'],
+        #                         style='gray',
+        #                         emoji='☁️'
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Rollo Finito'],
+        #                         style='gray',
+        #                         emoji='🏁'
+        #                     )
+        #                 ]
+        #                 regionRoles = [
+        #                     buttonRole(
+        #                         role=roles['@Freedom Eagles'],
+        #                         style='Dropdown',
+        #                         emoji='🇺🇸'
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Tea Sippers'],
+        #                         style='Dropdown',
+        #                         emoji='🇬🇧'
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Kangaroos'],
+        #                         style='Dropdown',
+        #                         emoji='🇦🇺'
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@Meatball Kings'],
+        #                         style='Dropdown',
+        #                         emoji='🇸🇪'
+        #                     ),
+        #                     buttonRole(
+        #                         role=roles['@pain'],
+        #                         style='Dropdown',
+        #                         emoji='🇪🇸'
+        #                     )
+        #                 ]
+        #                 await sendButtonRoles(pingRoles, channel, 'Click a Button to choose from various *Ping Roles*')
+        #                 await sendButtonRoles(tonaRoles, channel, 'Click a Button to choose from various *Tona Roles*')
+        #                 await sendButtonRoles(regionRoles, channel, 'Choose an item from the Dropdown to choose from various *Region Roles*', dropdown=True)
 
         # Import Assets
         for asset in os.listdir('assets'):
