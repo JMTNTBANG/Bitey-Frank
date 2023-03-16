@@ -30,8 +30,10 @@ Once Pip is installed use it to install the following:
 In order to make the bot function, you will need a discord bot TOKEN (If you do not have a discord bot make one **[Here](https://discord.com/developers/applications)**)
 
 Next create a `.env` file to the top of the directory, then paste the following inside the file:
-- `TOKEN=<Your Token Here>`
-
+```bash
+TOKEN=<Your Token Here>
+DEBUGTOKEN=<Your Token Here>
+```
 
 ## Development
 
