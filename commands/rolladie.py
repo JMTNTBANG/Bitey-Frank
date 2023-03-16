@@ -1,6 +1,7 @@
 import bot
 import discord
-from random import choice as randItem
+from random import choice
+
 
 def import_command():
 
@@ -19,5 +20,5 @@ def import_command():
         description="Roll a die"
     )
     # Code to Run Here
-    async def self(Interaction:discord.Interaction):
-        await Interaction.response.send_message(randItem(die))
+    async def roll_a_die(interaction: discord.Interaction):
+        await interaction.response.send_message(choice(die))

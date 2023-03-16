@@ -1,27 +1,30 @@
 import bot
 import discord
+global_message: discord.Message
 
 
 def import_command():
-    class messageModal(discord.ui.Modal, title='Create a Poll'):
+    class MessageModal(discord.ui.Modal,
+                       title='Create a Poll'):
         message = discord.ui.TextInput(
-            label = 'What would you like to send?',
-            style = discord.TextStyle.long,
-            placeholder = '\"Do you come from a land down under, Where women glow and men plunder?',
-            required = True
+            label='What would you like to send?',
+            style=discord.TextStyle.long,
+            placeholder='\"Do you come from a land down under, Where women glow and men plunder?'
         )
-        async def on_submit(self,Interaction:discord.Interaction):
-            await message.reply(self.message)
-            await Interaction.response.send_message(content='Message Sent!', ephemeral = True)
+
+        async def on_submit(self, interaction: discord.Interaction):
+            await global_message.reply(self.message.value)
+            await interaction.response.send_message(content='Message Sent!',
+                                                    ephemeral=True)
 
     # Command Info
     @bot.tree.context_menu(
         name="Reply As Frank"
     )
     # Code to Run Here
-    async def self(Interaction:discord.Interaction, Message:discord.Message):
-        global message
-        message = Message
-        async with Interaction.channel.typing():
-            modal = messageModal()
-            await Interaction.response.send_modal(modal)
+    async def reply_as_frank(interaction: discord.Interaction, message: discord.Message):
+        global global_message
+        global_message = message
+        async with interaction.channel.typing():
+            modal = MessageModal()
+            await interaction.response.send_modal(modal)

@@ -4,4 +4,4 @@ __all__ = []
 
 for command in listdir('commands'):
     if command.endswith('py'):
-        __all__.append(command[:-3]) #type: ignore
+        __all__.append(command[:-3])

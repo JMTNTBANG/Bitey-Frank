@@ -1,166 +1,195 @@
 import bot
 import discord
 
-def import_command():
 
+def import_command():
     # Create Command Group
-    setfrankresponseCommands = discord.app_commands.Group(
+    setfrankresponse_commands = discord.app_commands.Group(
         name='setfrankresponse',
         description='Add a trigger that frank will respond to with the response chosen'
     )
 
     # Add Command Group to Tree
-    bot.tree.add_command(setfrankresponseCommands)
+    bot.tree.add_command(setfrankresponse_commands)
 
     # Command Info
-    @setfrankresponseCommands.command(
+    @setfrankresponse_commands.command(
         name="-",
         description="Add a trigger that frank will respond to with the response chosen"
     )
     # Code to Run Here
-    async def self(Interaction:discord.Interaction, trigger:str, response:str):
-        open('snarks.txt', 'a').write(f't:{trigger} r:{response} u:{Interaction.user}\n')
-        await Interaction.response.send_message(f'Frank will now respond to `{trigger}` with `{response}`', ephemeral=True)
+    async def add_response(interaction: discord.Interaction, trigger: str, response: str):
+        open('snarks.txt', 'a').write(f't:{trigger} r:{response} u:{interaction.user}\n')
+        await interaction.response.send_message(f'Frank will now respond to `{trigger}` with `{response}`',
+                                                ephemeral=True)
     
-    @setfrankresponseCommands.command(
+    @setfrankresponse_commands.command(
         name='snarklist',
         description='List frank snarks'
     )
-    async def self2(Interaction:discord.Interaction):
-        embed=discord.Embed(
+    async def list_responses(interaction: discord.Interaction):
+        embed_page_1 = discord.Embed(
             title='Snarks',
             description='Page 1'
         )
-        view=discord.ui.View(timeout=0)
-        embed2=discord.Embed(
+        view_page_1 = discord.ui.View(timeout=0)
+        embed_page_2 = discord.Embed(
             title='Snarks',
             description='Page 2'
         )
-        view2=discord.ui.View(timeout=0)
-        embed3=discord.Embed(
+        view_page_2 = discord.ui.View(timeout=0)
+        embed_page_3 = discord.Embed(
             title='Snarks',
             description='Page 3'
         )
-        view3=discord.ui.View(timeout=0)
-        embed4=discord.Embed(
+        view_page_3 = discord.ui.View(timeout=0)
+        embed_page_4 = discord.Embed(
             title='Snarks',
             description='Page 4'
         )
-        view4=discord.ui.View(timeout=0)
-        embed5=discord.Embed(
+        view_page_4 = discord.ui.View(timeout=0)
+        embed_page_5 = discord.Embed(
             title='Snarks',
             description='Page 5'
         )
-        view5=discord.ui.View(timeout=0)
+        view_page_5 = discord.ui.View(timeout=0)
         f = open('snarks.txt', 'r')
         for x in f:
             trigger = x[x.find('t:')+2:x.find('r:')-1]
             response = x[x.find('r:')+2:x.find('u:')-1]
             creator = x[x.find('u:')+2:-1]
-            if len(embed.fields) == 25:
-                if len(embed2.fields) == 25:
-                    if len(embed3.fields) == 25:
-                        if len(embed4.fields) == 25:
-                            if len(embed5.fields) == 25:
+            if len(embed_page_1.fields) == 25:
+                if len(embed_page_2.fields) == 25:
+                    if len(embed_page_3.fields) == 25:
+                        if len(embed_page_4.fields) == 25:
+                            if len(embed_page_5.fields) == 25:
                                 raise Exception('Overflow Maxed Out')
                             else:
-                                embed5.add_field(name=trigger,value=f'{response} (Set by: {creator})',inline=False)
+                                embed_page_5.add_field(name=trigger,
+                                                       value=f'{response} (Set by: {creator})',
+                                                       inline=False)
                         else:
-                            embed4.add_field(name=trigger,value=f'{response} (Set by: {creator})',inline=False)
+                            embed_page_4.add_field(name=trigger,
+                                                   value=f'{response} (Set by: {creator})',
+                                                   inline=False)
                     else:
-                        embed3.add_field(name=trigger,value=f'{response} (Set by: {creator})',inline=False)
+                        embed_page_3.add_field(name=trigger,
+                                               value=f'{response} (Set by: {creator})',
+                                               inline=False)
                 else:
-                    embed2.add_field(name=trigger,value=f'{response} (Set by: {creator})',inline=False)
+                    embed_page_2.add_field(name=trigger,
+                                           value=f'{response} (Set by: {creator})',
+                                           inline=False)
             else:
-                embed.add_field(name=trigger,value=f'{response} (Set by: {creator})',inline=False)
+                embed_page_1.add_field(name=trigger,
+                                       value=f'{response} (Set by: {creator})',
+                                       inline=False)
 
-        
+        if len(embed_page_2.fields) > 0:
+            async def goto_page_2(button_press):
+                if interaction.user == button_press.user:
+                    await interaction.edit_original_response(embed=embed_page_2, view=view_page_2)
+                else:
+                    await button_press.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
 
-        if len(embed2.fields) > 0:
-            async def callback(button):
-                if Interaction.user == button.user:
-                    await Interaction.edit_original_response(embed=embed2, view=view2)
+            async def goto_page_1(button_press):
+                if interaction.user == button_press.user:
+                    await interaction.edit_original_response(embed=embed_page_1, view=view_page_1)
                 else:
-                    await button.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
-            async def callback2(button):
-                if Interaction.user == button.user:
-                    await Interaction.edit_original_response(embed=embed, view=view)
+                    await button_press.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
+
+            async def goto_page_3(button_press):
+                if interaction.user == button_press.user:
+                    await interaction.edit_original_response(embed=embed_page_3, view=view_page_3)
                 else:
-                    await button.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
-            async def callback3(button):
-                if Interaction.user == button.user:
-                    await Interaction.edit_original_response(embed=embed3, view=view3)
-                else:
-                    await button.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
-            button = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='◀️', disabled=True)
-            button2 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='▶️')
-            button2.callback=callback
-            view.add_item(button)
-            view.add_item(button2)
-            button3 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='◀️')
-            if len(embed3.fields) > 0:
-                button4 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='▶️')
+                    await button_press.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
+            back = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                     emoji='◀️',
+                                     disabled=True)
+            forward = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                        emoji='▶️')
+            forward.callback = goto_page_2
+            view_page_1.add_item(back)
+            view_page_1.add_item(forward)
+            next_back = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                          emoji='◀️')
+            if len(embed_page_3.fields) > 0:
+                next_forward = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                                 emoji='▶️')
             else:
-                button4 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='▶️', disabled=True)
-            button3.callback=callback2
-            button4.callback=callback3
-            view2.add_item(button3)
-            view2.add_item(button4)
-            await Interaction.response.send_message(embed=embed, view=view)
-            if len(embed3.fields) > 0:
-                async def callback(button):
-                    if Interaction.user == button.user:
-                        await Interaction.edit_original_response(embed=embed2, view=view2)
+                next_forward = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                                 emoji='▶️', disabled=True)
+            next_back.callback = goto_page_1
+            next_forward.callback = goto_page_3
+            view_page_2.add_item(next_back)
+            view_page_2.add_item(next_forward)
+            await interaction.response.send_message(embed=embed_page_1, view=view_page_1)
+            if len(embed_page_3.fields) > 0:
+                async def goto_page_2(button_press):
+                    if interaction.user == button_press.user:
+                        await interaction.edit_original_response(embed=embed_page_2, view=view_page_2)
                     else:
-                        await button.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
-                async def callback2(button):
-                    if Interaction.user == button.user:
-                        await Interaction.edit_original_response(embed=embed4, view=view4)
+                        await button_press.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
+
+                async def goto_page_4(button_press):
+                    if interaction.user == button_press.user:
+                        await interaction.edit_original_response(embed=embed_page_4, view=view_page_4)
                     else:
-                        await button.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
-                button = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='◀️')
-                if len(embed4.fields) > 0:
-                    button2 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='▶️')
+                        await button_press.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
+                back = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                         emoji='◀️')
+                if len(embed_page_4.fields) > 0:
+                    forward = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                                emoji='▶️')
                 else:
-                    button2 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='▶️', disabled=True)
-                button.callback=callback
-                button2.callback=callback2
-                view3.add_item(button)
-                view3.add_item(button2)
-                if len(embed4.fields) > 0:
-                    async def callback(button):
-                        if Interaction.user == button.user:
-                            await Interaction.edit_original_response(embed=embed3, view=view3)
+                    forward = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                                emoji='▶️', disabled=True)
+                back.callback = goto_page_2
+                forward.callback = goto_page_4
+                view_page_3.add_item(back)
+                view_page_3.add_item(forward)
+                if len(embed_page_4.fields) > 0:
+                    async def goto_page_3(button_press):
+                        if interaction.user == button_press.user:
+                            await interaction.edit_original_response(embed=embed_page_3, view=view_page_3)
                         else:
-                            await button.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
-                    async def callback2(button):
-                        if Interaction.user == button.user:
-                            await Interaction.edit_original_response(embed=embed5, view=view5)
+                            await button_press.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
+
+                    async def goto_page_5(button_press):
+                        if interaction.user == button_press.user:
+                            await interaction.edit_original_response(embed=embed_page_5, view=view_page_5)
                         else:
-                            await button.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
-                    button = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='◀️')
-                    if len(embed5.fields) > 0:
-                        button2 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='▶️')
+                            await button_press.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
+                    back = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                             emoji='◀️')
+                    if len(embed_page_5.fields) > 0:
+                        forward = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                                    emoji='▶️')
                     else:
-                        button2 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='▶️', disabled=True)
-                    button.callback=callback
-                    button2.callback=callback2
-                    view4.add_item(button)
-                    view4.add_item(button2)
-                    if len(embed5.fields) > 0: 
-                        async def callback(button):
-                            if Interaction.user == button.user:
-                                await Interaction.edit_original_response(embed=embed4, view=view4)
+                        forward = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                                    emoji='▶️', disabled=True)
+                    back.callback = goto_page_3
+                    forward.callback = goto_page_5
+                    view_page_4.add_item(back)
+                    view_page_4.add_item(forward)
+                    if len(embed_page_5.fields) > 0:
+                        async def goto_page_4(button_press):
+                            if interaction.user == button_press.user:
+                                await interaction.edit_original_response(embed=embed_page_4, view=view_page_4)
                             else:
-                                await button.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
-                        button = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='◀️')
-                        button2 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='▶️', disabled=True)
-                        button.callback=callback
-                        view5.add_item(button)
-                        view5.add_item(button2)
+                                await button_press.response.send_message('YOU DID NOT USE THIS COMMAND', ephemeral=True)
+                        back = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                                 emoji='◀️')
+                        forward = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                                    emoji='▶️', disabled=True)
+                        back.callback = goto_page_4
+                        view_page_5.add_item(back)
+                        view_page_5.add_item(forward)
         else:
-            button = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='◀️', disabled=True)
-            button2 = discord.ui.Button(style=discord.ButtonStyle.gray,emoji='▶️', disabled=True)
-            view.add_item(button)
-            view.add_item(button2)
-            await Interaction.response.send_message(embed=embed, view=view)
+            back = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                     emoji='◀️', disabled=True)
+            forward = discord.ui.Button(style=discord.ButtonStyle.gray,
+                                        emoji='▶️', disabled=True)
+            view_page_1.add_item(back)
+            view_page_1.add_item(forward)
+            await interaction.response.send_message(embed=embed_page_1, view=view_page_1)

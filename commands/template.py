@@ -9,5 +9,5 @@ def import_command():
         description="Description here"
     )
     # Code to Run Here
-    async def self(Interaction:discord.Interaction):
-        pass # delete this before you start coding
+    async def self(interaction: discord.Interaction):
+        pass  # delete this before you start coding

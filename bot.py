@@ -3,19 +3,20 @@ import os
 import re
 import time
 from os import getenv
-from random import choice as randItem
+from random import choice
+from typing import Any
 
 import discord
 import requests
+from discord import Client
+from discord.app_commands import CommandTree
 from dotenv import load_dotenv
 
-from youtube_tools import getLatestVideo
-
-# Regex to match frank with repeated characters
-FRAAAANNNKKK_REGEX = re.compile(r"f+r+a+n+k+")
+from youtube_tools import get_latest_video
 
 
-class buttonRole:
+# Set Classes
+class ButtonRole:
     def __init__(self, role: discord.Role, style, emoji: str):
         self.role = role
         self.label = role.name
@@ -35,175 +36,190 @@ class buttonRole:
             raise NameError('Button Style Not Found')
         self.emoji = emoji
 
-class webhook:
+
+class Webhook:
     def __init__(self, content, username, avatar, url, embeds=None, attachments=None,) -> None:
         self.content = content
         self.username = username
         self.avatar = avatar
         self.url = url
-        if embeds != None: self.embeds = embeds
-        if attachments != None: self.attachments = attachments
+        if embeds is not None:
+            self.embeds = embeds
+        if attachments is not None:
+            self.attachments = attachments
         self.json = {
             "content": self.content,
             "username": self.username,
             "avatar_url": self.avatar
         }
 
+
+# Set Bot Intents
+intents = discord.Intents.default()
+intents.members = True
+intents.message_content = True
+
+# Set Client Variables
+client: Client = discord.Client(intents=intents)
+tree: CommandTree[Client | Any] = discord.app_commands.CommandTree(client)
+
+# Set Dynamic Variables
+channels: list[
+    discord.VoiceChannel |
+    discord.StageChannel |
+    discord.ForumChannel |
+    discord.TextChannel |
+    discord.CategoryChannel
+    ] = []
+roles: dict[str, discord.Role] = {}
+emojis: dict[str, discord.Emoji] = {}
+assets: list[str] = []
+imported_commands: list[str] = []
+rolesLoaded: bool = False
+debug: bool = False
+
+# Set Static Variables
+frank_emojis = [
+    ':chonkfronk:',
+    ':frank3:',
+    ':sneakyfrank:',
+    ':hideyhole:',
+    ':jpeg:'
+]
+
+
+# Set Functions/Lambdas
+def print_emoji(emoji: str):
+    return f'<:{emojis[emoji].name}:{emojis[emoji].id}>'
+
+
+async def check_channels():
+    async def checker(ytchannel):
+        a = get_latest_video(f'@{ytchannel}')
+        if f'{ytchannel}.txt' not in os.listdir('./youtube'):
+            open(f'youtube/{ytchannel}.txt', 'x')
+        if f'N: {a.title} U: {a.url} T: {a.published}' != open(f'youtube/{ytchannel}.txt', 'r').readline():
+            open(f'youtube/{ytchannel}.txt', 'w').write(f'N: {a.title} U: {a.url} T: {a.published}')
+            response = f'{roles[f"@{a.channel} Ping"].mention} New video by {a.channel}! `{a.title}`\n' \
+                       f'Uploaded <t:{int(a.published.timestamp()) - 21600}:R>\n' \
+                       f'{a.url}'
+            for guild in client.guilds:
+                for channel in guild.text_channels:
+                    if channel.topic is not None:
+                        if 'YouTube Ping' in channel.topic:
+                            await channel.send(response)
+
+    await checker('DankPods')
+    await checker('GarbageTime420')
+    await checker('the.drum.thing.')
+    await checker('JMTNTBANG')
+    await checker('joshdoesntplaydrums')
+
+
+async def member_status_update(in_server: bool, member):
+    for channel in client.get_all_channels():
+        if channel.guild == member.guild and member.guild.system_channel == channel:
+            if isinstance(channel, discord.TextChannel):
+                if in_server:
+                    await channel.send(print_emoji(choice(frank_emojis)))
+                else:
+                    await channel.send(f'{print_emoji(":frank:")}7 {member.mention}')
+                break
+
+
+# async def send_button_roles(button_role: list, channel, message: str, dropdown: bool = False):
+#     def gen_callback(selected_role):
+#         async def button_callback(interaction: discord.Interaction):
+#             if interaction.user in selected_role.members:
+#                 await interaction.user.remove_roles(selected_role)  # type: ignore
+#                 await interaction.response.send_message(f'Removed Role: `{selected_role.name}`', ephemeral=True)
+#             else:
+#                 await interaction.user.add_roles(selected_role)  # type: ignore
+#                 await interaction.response.send_message(f'Added Role: `{selected_role.name}`', ephemeral=True)
+#         return button_callback
+#
+#     def gen_select_callback(role_dropdown: discord.ui.Select):
+#         async def select_callback(interaction: discord.Interaction):
+#             response = ''
+#             for dropdown_role in button_role:
+#                 if interaction.user in dropdown_role.role.members:
+#                     await interaction.user.remove_roles(dropdown_role.role)
+#                     response += f'Removed Role: `{dropdown_role.role.name}`\n'
+#             for dropdown_role in button_role:
+#                 if role_dropdown.values[0] == dropdown_role.label:
+#                     if interaction.user in dropdown_role.role.members:
+#                         await interaction.user.remove_roles(dropdown_role.role)
+#                         response += f'Removed Role: `{dropdown_role.role.name}`\n'
+#                     else:
+#                         await interaction.user.add_roles(dropdown_role.role)  # type: ignore
+#                         response += f'Added Role: `{dropdown_role.role.name}`\n'
+#             await interaction.response.send_message(response, ephemeral=True)
+#         return select_callback
+#
+#     view = discord.ui.View(timeout=None)
+#     if dropdown:
+#         select = discord.ui.Select()
+#         for role in button_role:
+#             option = discord.SelectOption(
+#                 label=role.label,
+#                 emoji=role.emoji
+#             )
+#             select.append_option(option)
+#         view.add_item(select)
+#         select.callback = gen_select_callback(select)
+#     else:
+#         for role in button_role:
+#             button = discord.ui.Button(
+#                 label=role.label,
+#                 style=role.style,
+#                 emoji=role.emoji
+#             )
+#             button.callback = gen_callback(role.role)
+#             view.add_item(button)
+#
+#     await channel.send(message, view=view)
+
+# Regex to match frank with repeated characters
+
+LONG_FRANK_REGEX = re.compile(r"f+r+a+n+k+")
+
+
 def start():
     # Load Token
     load_dotenv()
-    TOKEN = getenv('TOKEN')
-    if TOKEN is None:
+    if 'debug' in os.listdir('./'):
+        token = getenv('DEBUGTOKEN')
+    else:
+        token = getenv('TOKEN')
+    if token is None:
         print('GIMMIE YO GODDAMN TOKEN B***CH')
         exit(1)
 
-    async def checkChannels():
-        async def checker(YTchannel):
-            newLatestVideo = getLatestVideo(f'@{YTchannel}')
-            if f'{YTchannel}.txt' not in os.listdir('./youtube'):
-                open(f'youtube/{YTchannel}.txt', 'x')
-            if f'Title: {newLatestVideo.title} | URL: {newLatestVideo.url} | Timestamp: {newLatestVideo.published}' != open(f'youtube/{YTchannel}.txt', 'r').readline():
-                open(f'youtube/{YTchannel}.txt', 'w').write(f'Title: {newLatestVideo.title} | URL: {newLatestVideo.url} | Timestamp: {newLatestVideo.published}')
-                response = f'{roles[f"@{newLatestVideo.channel} Ping"].mention} New video by {newLatestVideo.channel}! `{newLatestVideo.title}`\nUploaded <t:{int(newLatestVideo.published.timestamp())-21600}:R>\n{newLatestVideo.url}'
-                for guild in client.guilds:
-                    for channel in guild.text_channels:
-                        if channel.topic != None:
-                            if 'YouTube Ping' in channel.topic:
-                                await channel.send(response)
-
-        await checker('DankPods')
-        await checker('GarbageTime420')
-        await checker('the.drum.thing.')
-        await checker('JMTNTBANG')
-        await checker('joshdoesntplaydrums')
-
-
-    # Set Bot Intents
-    intents = discord.Intents.default()
-    intents.members = True
-    intents.message_content = True
-
-    # Set Client Variables
-    global client
-    global tree
-    client = discord.Client(intents=intents)
-    tree = discord.app_commands.CommandTree(client)
-
-    # Set Dynamic Variables
-    global channels
-    global roles
-    global emojis
-    global assets
-    global importedCommands
-    global rolesLoaded
-    global debug
-    channels = []
-    roles = {}
-    emojis = {}
-    assets = []
-    importedCommands = []
-    rolesLoaded = False
-    debug = False
-
-    # Set Static Variables
-    global frankMojis
-    frankMojis = [
-        ':chonkfronk:',
-        ':frank3:',
-        ':sneakyfrank:',
-        ':hideyhole:',
-        ':jpeg:'
-    ]
-
-    # Set Functions/Lambdas
-    def printEmoji(emoji: str):
-        return f'<:{emojis[emoji].name}:{emojis[emoji].id}>'
-
-    async def memberStatusUpdate(inServer: bool, member):
-        for channel in client.get_all_channels():
-            if channel.guild == member.guild and member.guild.system_channel == channel:
-                if isinstance(channel, discord.TextChannel):
-                    if inServer:
-                        await channel.send(printEmoji(randItem(frankMojis)))
-                    else:
-                        await channel.send(f'{printEmoji(":frank:")}7 {member.mention}')
-                    break
-
-    async def sendButtonRoles(buttonRole, channel, message: str, dropdown: bool = False):
-        def gen_callback(role):
-            async def button_callback(interaction: discord.Interaction):
-                if interaction.user in role.members:
-                    await interaction.user.remove_roles(role)  # type: ignore
-                    await interaction.response.send_message(f'Removed Role: `{role.name}`', ephemeral=True)
-                else:
-                    await interaction.user.add_roles(role)  # type: ignore
-                    await interaction.response.send_message(f'Added Role: `{role.name}`', ephemeral=True)
-            return button_callback
-        def gen_select_callback(select: discord.ui.Select):
-            async def select_callback(interaction: discord.Interaction):
-                response=''
-                for role in buttonRole:
-                    if interaction.user in role.role.members:
-                        await interaction.user.remove_roles(role.role)  # type: ignore
-                        response+=f'Removed Role: `{role.role.name}`\n'
-                for role in buttonRole:
-                    if select.values[0] == role.label:
-                        if interaction.user in role.role.members:
-                            await interaction.user.remove_roles(role.role)  # type: ignore
-                            response+=f'Removed Role: `{role.role.name}`\n'
-                        else:
-                            await interaction.user.add_roles(role.role)  # type: ignore
-                            response+=f'Added Role: `{role.role.name}`\n'
-                await interaction.response.send_message(response, ephemeral=True)
-            return select_callback
-
-        view = discord.ui.View(timeout=None)
-        if dropdown:
-            select = discord.ui.Select()
-            for role in buttonRole:
-                option = discord.SelectOption(
-                    label=role.label,
-                    emoji=role.emoji
-                )
-                select.append_option(option)
-            view.add_item(select)
-            select.callback = gen_select_callback(select)
-        else:
-            for role in buttonRole:
-                button = discord.ui.Button(
-                    label=role.label,
-                    style=role.style,
-                    emoji=role.emoji
-                )
-                button.callback = gen_callback(role.role)
-                view.add_item(button)
-
-        await channel.send(message, view=view)
-
-    # Set Events
     @client.event
     async def on_ready():
         print(f'{client.user} active')
         if 'debug' in os.listdir('./'):
-            await client.change_presence(activity=discord.Game(name="Vet Simulator"),status=discord.Status.dnd)
+            await client.change_presence(activity=discord.Game(name="Vet Simulator"), status=discord.Status.dnd)
             print('Bot Presence changed to \"Playing Vet Simulator\"')
             global debug
             debug = True
             for guild in client.guilds:
                 for channel in guild.text_channels:
-                    if channel.topic != None:
+                    if channel.topic is not None:
                         if 'Bot Info' in channel.topic:
                             await channel.send(embed=discord.Embed(
                                 title='Online Status',
-                                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R> <@&1065773538281259009>',
+                                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R> <@&106577353828125'
+                                            f'9009>',
                                 color=discord.Color.green()
                                 ))
         else:
-            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="my stinky poos"))
+            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
+                                                                   name="my stinky poos"))
             print('Bot Presence changed to \"Watching my stinky poos\"')
             for guild in client.guilds:
                 for channel in guild.text_channels:
-                    if channel.topic != None:
+                    if channel.topic is not None:
                         if 'Bot Info' in channel.topic:
                             await channel.send(embed=discord.Embed(
                                 title='Online Status',
@@ -230,15 +246,14 @@ def start():
 
         # Command Import
         for command in os.listdir('commands'):
-            for command in os.listdir('commands'):
-                if command.endswith('py'):
-                    if '__init__.py' not in command:
-                        if 'template.py' not in command:
-                            if command not in importedCommands:
-                                exec(f'import commands.{command[:-3]}')
-                                exec(
-                                    f'commands.{command[:-3]}.import_command()')
-                                importedCommands.append(command)
+            if command.endswith('py'):
+                if '__init__.py' not in command:
+                    if 'template.py' not in command:
+                        if command not in imported_commands:
+                            exec(f'import commands.{command[:-3]}')
+                            exec(
+                                f'commands.{command[:-3]}.import_command()')
+                            imported_commands.append(command)
 
         # Send Button Roles (Disabled)
         # for guild in client.guilds:
@@ -337,9 +352,16 @@ def start():
         #                         emoji='🇪🇸'
         #                     )
         #                 ]
-        #                 await sendButtonRoles(pingRoles, channel, 'Click a Button to choose from various *Ping Roles*')
-        #                 await sendButtonRoles(tonaRoles, channel, 'Click a Button to choose from various *Tona Roles*')
-        #                 await sendButtonRoles(regionRoles, channel, 'Choose an item from the Dropdown to choose from various *Region Roles*', dropdown=True)
+        #                 await send_button_roles(pingRoles,
+        #                                         channel,
+        #                                         'Click a Button to choose from various *Ping Roles*')
+        #                 await send_button_roles(tonaRoles,
+        #                                         channel,
+        #                                         'Click a Button to choose from various *Tona Roles*')
+        #                 await send_button_roles(regionRoles,
+        #                                         channel,
+        #                                         'Choose an item from the Dropdown to choose from various *Region Roles*',
+        #                                         dropdown=True)
 
         # Import Assets
         for asset in os.listdir('assets'):
@@ -350,75 +372,73 @@ def start():
 
     @client.event
     async def on_member_join(member):
-        await memberStatusUpdate(True, member)
+        await member_status_update(True, member)
 
     @client.event
     async def on_member_remove(member):
-        await memberStatusUpdate(False, member)
+        await member_status_update(False, member)
 
     @client.event
     async def on_message(message: discord.Message):
         if client.user in message.mentions:
             if message.author != client.user:
-                await message.channel.send(printEmoji(randItem(frankMojis)))
+                await message.channel.send(print_emoji(choice(frank_emojis)))
 
-        if FRAAAANNNKKK_REGEX.search(message.content.casefold()) is not None:
-                snarks = open('snarks.txt', 'r')
-                global yes
-                yes = False
-                for snark in snarks:
-                    trigger = snark[snark.find('t:')+2:snark.find('r:')-1]
-                    response = snark[snark.find('r:')+2:snark.find('u:')-1]
-                    if trigger in message.content.lower():
-                        if message.author != client.user:
-                            async with message.channel.typing():
-                                await asyncio.sleep(len(response)/5)
-                            if message.channel.last_message == message:
-                                await message.channel.send(f'{response}')
-                            else:
-                                await message.reply(f'{response}')
-                            yes = True
-                if not yes:
+        if LONG_FRANK_REGEX.search(message.content.casefold()) is not None:
+            snarks = open('snarks.txt', 'r')
+            is_snark = False
+            for snark in snarks:
+                trigger = snark[snark.find('t:')+2:snark.find('r:')-1]
+                response = snark[snark.find('r:')+2:snark.find('u:')-1]
+                if trigger in message.content.lower():
                     if message.author != client.user:
-                        await message.channel.send(printEmoji(randItem(frankMojis)))
+                        async with message.channel.typing():
+                            await asyncio.sleep(len(response)/5)
+                        if message.channel.last_message == message:
+                            await message.channel.send(f'{response}')
+                        else:
+                            await message.reply(f'{response}')
+                        is_snark = True
+                if not is_snark:
+                    if message.author != client.user:
+                        await message.channel.send(print_emoji(choice(frank_emojis)))
                 snarks.close()
 
         if message.guild is None and not message.author.bot:
-            global threadExists
-            threadExists = False
+            thread_exists = False
             for guild in client.guilds:
                 for channel in guild.text_channels:
-                    if channel.topic != None:
+                    if channel.topic is not None:
                         if 'DMs' in channel.topic:
                             for thread in channel.threads:
                                 if thread.name == f'{message.author.name}#{message.author.discriminator}':
-                                    threadExists = True
-                                    global threadd
-                                    threadd = thread
-                            if threadExists == False:
-                                newThread = await channel.send(f'`Beginning of Conversation with {message.author.name}`')
-                                threadd = await channel.create_thread(name=f'{message.author.name}#{message.author.discriminator}',message=newThread)
-                            DMWebhook = webhook(content=message.content, username=message.author.name, avatar=message.author.avatar.url, url=f'https://discord.com/api/webhooks/1072723874648690748/4lkka6Rs41p1xV5r8Jfq2Qbsh16tQ0hrJboMF73BiQwbEqJrmTrbdvACHVZFDMEu1bCC?thread_id={threadd.id}')
-                            requests.post(DMWebhook.url,DMWebhook.json)
+                                    thread_exists = True
+                                    break
+                            if not thread_exists:
+                                thread_message = await channel.send(f'`Beginning of Conversation with {message.author.name}`')
+                                thread = await channel.create_thread(name=f'{message.author.name}#{message.author.discriminator}',
+                                                                     message=thread_message)
+                            dm_webhook = Webhook(content=message.content,
+                                                 username=message.author.name,
+                                                 avatar=message.author.avatar.url,
+                                                 url=f'https://discord.com/api/webhooks/1072723874648690748/4lkka6Rs41p1xV5r8Jfq2Qbsh16tQ0hrJboMF73BiQwbEqJrmTrbdvACHVZFDMEu1bCC?thread_id={thread.id}')
+                            requests.post(dm_webhook.url, dm_webhook.json)
         if not message.author.bot:
             for guild in client.guilds:
-                    for channel in guild.text_channels:
-                        if channel.topic != None:
-                            if 'DMs' in channel.topic:
-                                for thread in channel.threads:
-                                    async for threadMessage in thread.history():
-                                        if message == threadMessage:
-                                            dm=await guild.get_member_named(thread.name).create_dm()
-                                            async with dm.typing():
-                                                await asyncio.sleep(len(message.content)/5)
-                                            await dm.send(message.content)
-                                            break
-
-
+                for channel in guild.text_channels:
+                    if channel.topic is not None:
+                        if 'DMs' in channel.topic:
+                            for thread in channel.threads:
+                                async for threadMessage in thread.history():
+                                    if message == threadMessage:
+                                        dm = await guild.get_member_named(thread.name).create_dm()
+                                        async with dm.typing():
+                                            await asyncio.sleep(len(message.content)/5)
+                                        await dm.send(message.content)
+                                        break
 
         if rolesLoaded and not debug:
-            await checkChannels()
-
+            await check_channels()
 
     # Finalize Bot
-    client.run(TOKEN)
+    client.run(token)

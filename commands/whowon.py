@@ -1,5 +1,9 @@
 import bot
 import discord
+magic_poll: discord.Message
+double_poll: discord.Message
+magic_poll_embed: discord.Embed
+double_poll_embed: discord.Embed
 
 
 def import_command():
@@ -9,118 +13,112 @@ def import_command():
         description="Who Won?"
     )
     # Code to Run Here
-    async def self(Interaction:discord.Interaction, magicpollid:str, doublepollid:str, magicwinner:int, doublewinner:int):
-        await Interaction.response.send_message('Calculating...')
+    async def who_won(interaction: discord.Interaction,
+                      magic_poll_id: str,
+                      double_poll_id: str,
+                      magic_winner: int,
+                      double_winner: int):
+        await interaction.response.send_message('Calculating...')
         for guild in bot.client.guilds:
             for channel in guild.channels:
                 if isinstance(channel, discord.TextChannel):
-                    if channel.permissions_for(guild.get_member(bot.client.user.id)).read_message_history == True:
+                    if channel.permissions_for(guild.get_member(bot.client.user.id)).read_message_history:
                         async for message in channel.history():
-                            if message.id == int(magicpollid):
-                                global magicPoll
-                                magicPoll = message
-                            if message.id == int(doublepollid):
-                                global doublePoll
-                                doublePoll = message
+                            if message.id == int(magic_poll_id):
+                                global magic_poll
+                                magic_poll = message
+                            if message.id == int(double_poll_id):
+                                global double_poll
+                                double_poll = message
 
-        for embed in magicPoll.embeds:
+        for embed in magic_poll.embeds:
             if 'Poll:' in str(embed.title):
                 if 'Results' not in str(embed.title):
-                    global magicPollEmbed
-                    magicPollEmbed = embed
+                    global magic_poll_embed
+                    magic_poll_embed = embed
                     break
         
-        for embed in doublePoll.embeds:
+        for embed in double_poll.embeds:
             if 'Poll:' in str(embed.title):
                 if 'Results' not in str(embed.title):
-                    global doublePollEmbed
-                    doublePollEmbed = embed
+                    global double_poll_embed
+                    double_poll_embed = embed
                     break
 
-        global oneReactors
-        global twoReactors
-        global threeReactors
-        global fourReactors
-        global fiveReactors
-        global sixReactors
-        global sevenReactors
-        global eightReactors
-        global nineReactors
-        global tenReactors
-        oneReactors=[]
-        twoReactors=[]
-        threeReactors=[]
-        fourReactors=[]
-        fiveReactors=[]
-        sixReactors=[]
-        sevenReactors=[]
-        eightReactors=[]
-        nineReactors=[]
-        tenReactors=[]
+        one_reactors = []
+        two_reactors = []
+        three_reactors = []
+        four_reactors = []
+        five_reactors = []
+        six_reactors = []
+        seven_reactors = []
+        eight_reactors = []
+        nine_reactors = []
+        ten_reactors = []
 
-        async def getUsers(message):
-            for reaction in message.reactions:
+        async def get_users(source_message):
+            for reaction in source_message.reactions:
                 if reaction.emoji == '1️⃣':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            oneReactors.append(user)
+                            one_reactors.append(user)
                     
                 elif reaction.emoji == '2️⃣':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            twoReactors.append(user)
+                            two_reactors.append(user)
                     
                 elif reaction.emoji == '3️⃣':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            threeReactors.append(user)
+                            three_reactors.append(user)
                     
                 elif reaction.emoji == '4️⃣':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            fourReactors.append(user)
+                            four_reactors.append(user)
                     
                 elif reaction.emoji == '5️⃣':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            fiveReactors.append(user)
+                            five_reactors.append(user)
                     
                 elif reaction.emoji == '6️⃣':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            sixReactors.append(user)
+                            six_reactors.append(user)
                     
                 elif reaction.emoji == '7️⃣':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            sevenReactors.append(user)
+                            seven_reactors.append(user)
                     
                 elif reaction.emoji == '8️⃣':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            eightReactors.append(user)
+                            eight_reactors.append(user)
                     
                 elif reaction.emoji == '9️⃣':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            nineReactors.append(user)
+                            nine_reactors.append(user)
                     
                 elif reaction.emoji == '🔟':
                     async for user in reaction.users():
                         if str(bot.client.user) not in str(user):
-                            tenReactors.append(user)
+                            ten_reactors.append(user)
 
-        embed=discord.Embed(
+        embed = discord.Embed(
             title='Winners!',
             description='',
             color=discord.Color.green()
                 ).set_author(
-                    name=Interaction.user.name,
-                    icon_url=Interaction.user.avatar
+                    name=interaction.user.name,
+                    icon_url=interaction.user.avatar
                 )
 
-        async def generateField(reactors, number, bool:bool=False):
-            if bool == False:
+        async def generate_field(reactors, number, is_double: bool = False):
+            if not is_double:
                 value = ''
                 for user in reactors:
                     value += f'{user}\n'
@@ -139,74 +137,74 @@ def import_command():
                     inline=False
                     )
 
-        await getUsers(magicPoll)
+        await get_users(magic_poll)
 
-        if magicwinner != 0:
-            for field in magicPollEmbed.to_dict().get('fields'):
+        if magic_winner != 0:
+            for field in magic_poll_embed.to_dict().get('fields'):
                 if field['name'] == '1️⃣':
-                    if magicwinner == 1:
-                        await generateField(oneReactors,'1️⃣')
+                    if magic_winner == 1:
+                        await generate_field(one_reactors, '1️⃣')
                 elif field['name'] == '2️⃣':
-                    if magicwinner == 2:
-                        await generateField(twoReactors,'2️⃣')
+                    if magic_winner == 2:
+                        await generate_field(two_reactors, '2️⃣')
                 elif field['name'] == '3️⃣':
-                    if magicwinner == 3:
-                        await generateField(threeReactors,'3️⃣')
+                    if magic_winner == 3:
+                        await generate_field(three_reactors, '3️⃣')
                 elif field['name'] == '4️⃣':
-                    if magicwinner == 4:
-                        await generateField(fourReactors,'4️⃣')
+                    if magic_winner == 4:
+                        await generate_field(four_reactors, '4️⃣')
                 elif field['name'] == '5️⃣':
-                    if magicwinner == 5:
-                        await generateField(fiveReactors,'5️⃣')
+                    if magic_winner == 5:
+                        await generate_field(five_reactors, '5️⃣')
                 elif field['name'] == '6️⃣':
-                    if magicwinner == 6:
-                        await generateField(sixReactors,'6️⃣')
+                    if magic_winner == 6:
+                        await generate_field(six_reactors, '6️⃣')
                 elif field['name'] == '7️⃣':
-                    if magicwinner == 7:
-                        await generateField(sevenReactors,'7️⃣')
+                    if magic_winner == 7:
+                        await generate_field(seven_reactors, '7️⃣')
                 elif field['name'] == '8️⃣':
-                    if magicwinner == 8:
-                        await generateField(eightReactors,'8️⃣')
+                    if magic_winner == 8:
+                        await generate_field(eight_reactors, '8️⃣')
                 elif field['name'] == '9️⃣':
-                    if magicwinner == 9:
-                        await generateField(nineReactors,'9️⃣')
+                    if magic_winner == 9:
+                        await generate_field(nine_reactors, '9️⃣')
                 elif field['name'] == '🔟':
-                    if magicwinner == 10:
-                        await generateField(tenReactors,'🔟')
+                    if magic_winner == 10:
+                        await generate_field(ten_reactors, '🔟')
 
-        await getUsers(doublePoll)
+        await get_users(double_poll)
 
-        if doublewinner != 0:
-            for field in doublePollEmbed.to_dict().get('fields'):
+        if double_winner != 0:
+            for field in double_poll_embed.to_dict().get('fields'):
                 if field['name'] == '1️⃣':
-                    if doublewinner == 1:
-                        await generateField(oneReactors,'1️⃣',True)
+                    if double_winner == 1:
+                        await generate_field(one_reactors, '1️⃣', True)
                 elif field['name'] == '2️⃣':
-                    if doublewinner == 2:
-                        await generateField(twoReactors,'2️⃣',True)
+                    if double_winner == 2:
+                        await generate_field(two_reactors, '2️⃣', True)
                 elif field['name'] == '3️⃣':
-                    if doublewinner == 3:
-                        await generateField(threeReactors,'3️⃣',True)
+                    if double_winner == 3:
+                        await generate_field(three_reactors, '3️⃣', True)
                 elif field['name'] == '4️⃣':
-                    if doublewinner == 4:
-                        await generateField(fourReactors,'4️⃣',True)
+                    if double_winner == 4:
+                        await generate_field(four_reactors, '4️⃣', True)
                 elif field['name'] == '5️⃣':
-                    if doublewinner == 5:
-                        await generateField(fiveReactors,'5️⃣',True)
+                    if double_winner == 5:
+                        await generate_field(five_reactors, '5️⃣', True)
                 elif field['name'] == '6️⃣':
-                    if doublewinner == 6:
-                        await generateField(sixReactors,'6️⃣',True)
+                    if double_winner == 6:
+                        await generate_field(six_reactors, '6️⃣', True)
                 elif field['name'] == '7️⃣':
-                    if doublewinner == 7:
-                        await generateField(sevenReactors,'7️⃣',True)
+                    if double_winner == 7:
+                        await generate_field(seven_reactors, '7️⃣', True)
                 elif field['name'] == '8️⃣':
-                    if doublewinner == 8:
-                        await generateField(eightReactors,'8️⃣',True)
+                    if double_winner == 8:
+                        await generate_field(eight_reactors, '8️⃣', True)
                 elif field['name'] == '9️⃣':
-                    if doublewinner == 9:
-                        await generateField(nineReactors,'9️⃣',True)
+                    if double_winner == 9:
+                        await generate_field(nine_reactors, '9️⃣', True)
                 elif field['name'] == '🔟':
-                    if doublewinner == 10:
-                        await generateField(tenReactors,'🔟',True)
+                    if double_winner == 10:
+                        await generate_field(ten_reactors, '🔟', True)
 
-        poll = await Interaction.channel.send(embed=embed)
+        await interaction.channel.send(embed=embed)

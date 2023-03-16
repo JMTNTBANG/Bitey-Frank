@@ -10,7 +10,7 @@ def import_command():
         description="Get The Time"
     )
     # Code to Run Here
-    async def self(Interaction:discord.Interaction):
+    async def print_time_codes(Interaction:discord.Interaction):
         embed = discord.Embed(title='Current time', description=int(time.time()))
         embed.add_field(name='', value=f'<t:{int(time.time())}:t>', inline=False)
         embed.add_field(name='', value=f'<t:{int(time.time())}:T>', inline=False)

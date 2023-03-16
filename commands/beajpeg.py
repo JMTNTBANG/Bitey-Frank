@@ -1,6 +1,6 @@
 import bot
 import discord
-from random import choice as randItem
+from random import choice
 
 
 def import_command():
@@ -8,5 +8,5 @@ def import_command():
         name="beajpeg",
         description="Send a Random Image of Frank"
     )
-    async def self(interaction:discord.Interaction):
-        await interaction.response.send_message(file=discord.File(randItem(bot.assets)))
+    async def be_a_jpeg(interaction: discord.Interaction):
+        await interaction.response.send_message(file=discord.File(choice(bot.assets)))

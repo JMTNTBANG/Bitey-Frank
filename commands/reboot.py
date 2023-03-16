@@ -10,6 +10,7 @@ def import_command():
         description="Reboot the Bot"
     )
     # Code to Run Here
-    async def self(Interaction:discord.Interaction):
-        await Interaction.response.send_message('Rebooting...')
+    async def kill(interaction: discord.Interaction):
+        await interaction.response.send_message('Rebooting...')
         sys.exit()
+    
