@@ -31,8 +31,8 @@ In order to make the bot function, you will need a discord bot TOKEN (If you do 
 
 Next create a `.env` file to the top of the directory, then paste the following inside the file:
 ```bash
-TOKEN=<Your Token Here>
-DEBUGTOKEN=<Your Token Here>
+TOKEN=<Your Main Bot Token Here>
+DEBUGTOKEN=<Your Debug Bot Token Here>
 ```
 
 ## Development
