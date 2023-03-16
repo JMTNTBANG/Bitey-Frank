@@ -32,6 +32,7 @@ In order to make the bot function, you will need a discord bot TOKEN (If you do 
 Next create a `.env` file to the top of the directory, then paste the following inside the file:
 - `TOKEN=<Your Token Here>`
 
+If you would like to create your own server for testing, this template of the Garbage Stream Server is available **[Here](https://discord.new/wBSWQw9dgMfV)**
 
 
 ## Development
