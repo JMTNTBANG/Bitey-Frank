@@ -48,7 +48,7 @@ You may require some specifc emojis on your server for Frank to function correct
 For the snarky messages that Frank sends to work you will need a `snarks.txt` file at the top of the Frank directory. Here is an example of a "snark command" that will need to be added into the file:
 
 ```bash
-(Add snarks syntax example here)
+t: <trigger> r: <response> u: <user>
 ```
 
 ## FAQs
