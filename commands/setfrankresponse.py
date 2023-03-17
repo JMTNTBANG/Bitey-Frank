@@ -20,6 +20,8 @@ def import_command():
     )
     # Code to Run Here
     async def add_response(interaction: discord.Interaction, trigger: str, response: str):
+        if ',' in response:
+            response = f'\"{response}\"'
         open('snarks.csv', 'a').write(f'{trigger},{response},{interaction.user}\n')
         await interaction.response.send_message(f'Frank will now respond to `{trigger}` with `{response}`',
                                                 ephemeral=True)
