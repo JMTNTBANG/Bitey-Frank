@@ -11,6 +11,7 @@ import requests
 from discord import Client
 from discord.app_commands import CommandTree
 from dotenv import load_dotenv
+import csv
 
 from youtube_tools import get_latest_video
 
@@ -385,25 +386,25 @@ def start():
                 await message.channel.send(print_emoji(choice(frank_emojis)))
 
         if LONG_FRANK_REGEX.search(message.content.casefold()) is not None:
-            snarks = open('snarks.csv', 'r')
-            is_snark = False
-            for snark in snarks:
-                trigger = snark[0:snark.find(',')]
-                snark = snark[snark.find(',')+1:-1]
-                response = snark[0:snark.find(',')]
-                if trigger in message.content.lower():
+            with open('snarks.csv', 'r') as file:
+                snarks = csv.reader(file, delimiter=',')
+                is_snark = False
+                for snark in snarks:
+                    if not snark[0] == 'Trigger' and not snark[1] == 'Response' and not snark[2] == 'User':
+                        trigger = snark[0]
+                        response = snark[1]
+                        if trigger in message.content.lower():
+                            if message.author != client.user:
+                                async with message.channel.typing():
+                                    await asyncio.sleep(len(response)/5)
+                                if message.channel.last_message == message:
+                                    await message.channel.send(f'{response}')
+                                else:
+                                    await message.reply(f'{response}')
+                                is_snark = True
+                if not is_snark:
                     if message.author != client.user:
-                        async with message.channel.typing():
-                            await asyncio.sleep(len(response)/5)
-                        if message.channel.last_message == message:
-                            await message.channel.send(f'{response}')
-                        else:
-                            await message.reply(f'{response}')
-                        is_snark = True
-            if not is_snark:
-                if message.author != client.user:
-                    await message.channel.send(print_emoji(choice(frank_emojis)))
-            snarks.close()
+                        await message.channel.send(print_emoji(choice(frank_emojis)))
 
         if message.guild is None and not message.author.bot:
             thread_exists = False
