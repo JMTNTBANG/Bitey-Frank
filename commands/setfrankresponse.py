@@ -19,7 +19,7 @@ def import_command():
     )
     # Code to Run Here
     async def add_response(interaction: discord.Interaction, trigger: str, response: str):
-        open('snarks.txt', 'a').write(f't:{trigger} r:{response} u:{interaction.user}\n')
+        open('snarks.csv', 'a').write(f'{trigger},{response},{interaction.user}\n')
         await interaction.response.send_message(f'Frank will now respond to `{trigger}` with `{response}`',
                                                 ephemeral=True)
     
@@ -53,37 +53,41 @@ def import_command():
             description='Page 5'
         )
         view_page_5 = discord.ui.View(timeout=0)
-        f = open('snarks.txt', 'r')
+        f = open('snarks.csv', 'r')
         for x in f:
-            trigger = x[x.find('t:')+2:x.find('r:')-1]
-            response = x[x.find('r:')+2:x.find('u:')-1]
-            creator = x[x.find('u:')+2:-1]
-            if len(embed_page_1.fields) == 25:
-                if len(embed_page_2.fields) == 25:
-                    if len(embed_page_3.fields) == 25:
-                        if len(embed_page_4.fields) == 25:
-                            if len(embed_page_5.fields) == 25:
-                                raise Exception('Overflow Maxed Out')
+            if x != 'Trigger,Response,User':
+                trigger = x[0:x.find(',')]
+                x = x[x.find(',')+1:-1]
+                response = x[0:x.find(',')]
+                x = x[x.find(',')+1:-1]
+                creator = x[0:-1]
+                x = x[0:-1]
+                if len(embed_page_1.fields) == 25:
+                    if len(embed_page_2.fields) == 25:
+                        if len(embed_page_3.fields) == 25:
+                            if len(embed_page_4.fields) == 25:
+                                if len(embed_page_5.fields) == 25:
+                                    raise Exception('Overflow Maxed Out')
+                                else:
+                                    embed_page_5.add_field(name=trigger,
+                                                           value=f'{response} (Set by: {creator})',
+                                                           inline=False)
                             else:
-                                embed_page_5.add_field(name=trigger,
+                                embed_page_4.add_field(name=trigger,
                                                        value=f'{response} (Set by: {creator})',
                                                        inline=False)
                         else:
-                            embed_page_4.add_field(name=trigger,
+                            embed_page_3.add_field(name=trigger,
                                                    value=f'{response} (Set by: {creator})',
                                                    inline=False)
                     else:
-                        embed_page_3.add_field(name=trigger,
+                        embed_page_2.add_field(name=trigger,
                                                value=f'{response} (Set by: {creator})',
                                                inline=False)
                 else:
-                    embed_page_2.add_field(name=trigger,
+                    embed_page_1.add_field(name=trigger,
                                            value=f'{response} (Set by: {creator})',
                                            inline=False)
-            else:
-                embed_page_1.add_field(name=trigger,
-                                       value=f'{response} (Set by: {creator})',
-                                       inline=False)
 
         if len(embed_page_2.fields) > 0:
             async def goto_page_2(button_press):

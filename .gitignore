@@ -2,5 +2,5 @@
 .env
 debug
 youtube/*
-snarks.txt
+snarks.csv
 *.pyc

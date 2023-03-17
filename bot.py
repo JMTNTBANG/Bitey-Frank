@@ -385,11 +385,12 @@ def start():
                 await message.channel.send(print_emoji(choice(frank_emojis)))
 
         if LONG_FRANK_REGEX.search(message.content.casefold()) is not None:
-            snarks = open('snarks.txt', 'r')
+            snarks = open('snarks.csv', 'r')
             is_snark = False
             for snark in snarks:
-                trigger = snark[snark.find('t:')+2:snark.find('r:')-1]
-                response = snark[snark.find('r:')+2:snark.find('u:')-1]
+                trigger = snark[0:snark.find(',')]
+                snark = snark[snark.find(',')+1:-1]
+                response = snark[0:snark.find(',')]
                 if trigger in message.content.lower():
                     if message.author != client.user:
                         async with message.channel.typing():
@@ -399,10 +400,10 @@ def start():
                         else:
                             await message.reply(f'{response}')
                         is_snark = True
-                if not is_snark:
-                    if message.author != client.user:
-                        await message.channel.send(print_emoji(choice(frank_emojis)))
-                snarks.close()
+            if not is_snark:
+                if message.author != client.user:
+                    await message.channel.send(print_emoji(choice(frank_emojis)))
+            snarks.close()
 
         if message.guild is None and not message.author.bot:
             thread_exists = False
