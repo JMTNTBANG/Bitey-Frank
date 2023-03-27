@@ -23,6 +23,7 @@ def import_command():
                             interaction: discord.Interaction):
             modal = PollModalStep2()
             global poll_question
+            poll_question = self.question
 
             async def callback(next_step_button):
                 await next_step_button.response.send_modal(modal)
