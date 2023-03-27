@@ -5,7 +5,7 @@ global_message: discord.Message
 
 def import_command():
     class MessageModal(discord.ui.Modal,
-                       title='Create a Poll'):
+                       title='Reply as Frank'):
         message = discord.ui.TextInput(
             label='What would you like to send?',
             style=discord.TextStyle.long,
