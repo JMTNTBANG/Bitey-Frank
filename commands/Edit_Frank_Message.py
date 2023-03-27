@@ -28,6 +28,7 @@ def import_command():
             global global_message
             global_message = message
             async with interaction.channel.typing():
+                MessageModal.message.default = message.content
                 modal = MessageModal()
                 await interaction.response.send_modal(modal)
         else:
