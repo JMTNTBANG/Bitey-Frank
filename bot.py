@@ -110,6 +110,7 @@ async def check_channels():
                         if 'YouTube Ping' in channel.topic:
                             await channel.send(response)
 
+    await checker('Dankmus')
     await checker('DankPods')
     await checker('GarbageTime420')
     await checker('the.drum.thing.')
