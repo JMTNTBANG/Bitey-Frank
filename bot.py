@@ -102,7 +102,7 @@ async def check_channels():
         if f'N: {a.title} U: {a.url} T: {a.published}' != open(f'youtube/{ytchannel}.txt', 'r').readline():
             open(f'youtube/{ytchannel}.txt', 'w').write(f'N: {a.title} U: {a.url} T: {a.published}')
             response = f'{roles[f"@{a.channel} Ping"].mention} New video by {a.channel}! `{a.title}`\n' \
-                       f'Uploaded <t:{int(a.published.timestamp()) - 21600}:R>\n' \
+                       f'Uploaded <t:{int(a.published.timestamp())}:R>\n' \
                        f'{a.url}'
             for guild in client.guilds:
                 for channel in guild.text_channels:
@@ -113,6 +113,7 @@ async def check_channels():
     await checker('DankPods')
     await checker('GarbageTime420')
     await checker('the.drum.thing.')
+    await checker('Games_for_James')
     await checker('JMTNTBANG')
     await checker('joshdoesntplaydrums')
 
