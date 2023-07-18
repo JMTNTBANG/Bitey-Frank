@@ -12,33 +12,31 @@ poll_option_5: discord.ui.TextInput
 
 
 def import_command():
-    class PollModal(discord.ui.Modal,
-                    title='Create a Poll'):
-        question = discord.ui.TextInput(
-            label='What question are you asking?',
-            placeholder='If given the chance would you help Frank rule the world?'
+    class messageModal(discord.ui.Modal, title='Create a Poll'):
+        message = discord.ui.TextInput(
+            label='What shall be in the message before the poll',
+            placeholder='@Poll Ping'
         )
+        async def on_submit(self, interaction: discord.Interaction):
+            await interaction.response.send_message("Message Set!", ephemeral=True)
 
-        async def on_submit(self,
-                            interaction: discord.Interaction):
-            modal = PollModalStep2()
-            global poll_question
-            poll_question = self.question
+    class questionModal(discord.ui.Modal, title='Create a Poll'):
+        question = discord.ui.TextInput(
+            label='What are you asking?',
+            placeholder='Is frank your one true god?'
+        )
+        async def on_submit(self, interaction: discord.Interaction):
+            await interaction.response.send_message("Question Set!", ephemeral=True)
 
-            async def callback(next_step_button):
-                await next_step_button.response.send_modal(modal)
+    class descriptionModal(discord.ui.Modal, title='Create a Poll'):
+        description = discord.ui.TextInput(
+            label='Provide more info',
+            placeholder='cmon, you know what the correct answer is'
+        )
+        async def on_submit(self, interaction: discord.Interaction):
+            await interaction.response.send_message("Description Set!", ephemeral=True)
 
-            view = discord.ui.View(timeout=15)
-            button = discord.ui.Button(
-                label='Click here for Part 2'
-            )
-            button.callback = callback
-            view.add_item(button)
-            await interaction.response.send_message(content='Step 1 Completed',
-                                                    view=view,
-                                                    ephemeral=True)
-
-    class PollModalStep2(discord.ui.Modal, title='Create a Poll'):
+    class poll_1_5Modal(discord.ui.Modal, title='Create a Poll'):
         option1 = discord.ui.TextInput(
             label='Option 1',
             placeholder='Yes',
@@ -62,34 +60,10 @@ def import_command():
             placeholder='Yes',
             required=False
         )
-
         async def on_submit(self, interaction: discord.Interaction):
-            modal = PollModalStep3()
-            global poll_option_1
-            global poll_option_2
-            global poll_option_3
-            global poll_option_4
-            global poll_option_5
-            poll_option_1 = self.option1
-            poll_option_2 = self.option2
-            poll_option_3 = self.option3
-            poll_option_4 = self.option4
-            poll_option_5 = self.option5
+            await interaction.response.send_message("Options 1-5 Set!", ephemeral=True)
 
-            async def callback(next_step_button):
-                await next_step_button.response.send_modal(modal)
-
-            view = discord.ui.View(timeout=15)
-            button = discord.ui.Button(
-                label='Click here for Part 3'
-            )
-            button.callback = callback
-            view.add_item(button)
-            await interaction.response.send_message(content='Step 2 Completed',
-                                                    view=view,
-                                                    ephemeral=True)
-
-    class PollModalStep3(discord.ui.Modal,
+    class poll_6_10Modal(discord.ui.Modal,
                          title='Create a Poll'):
         option6 = discord.ui.TextInput(
             label='Option 6',
@@ -116,66 +90,8 @@ def import_command():
             placeholder='say no and i come after you and your family',
             required=False
         )
-
-        async def on_submit(self,
-                            interaction: discord.Interaction):
-            await interaction.response.send_message('Creating Poll',
-                                                    ephemeral=True)
-            embed = discord.Embed(
-                title=f'Poll: {poll_question}',
-                description='',
-                color=discord.Color.green()
-            ).set_author(
-                name=interaction.user.name,
-                icon_url=interaction.user.avatar
-            )
-            embed.add_field(name='1️⃣', value=poll_option_1, inline=False)
-            embed.add_field(name='2️⃣', value=poll_option_2, inline=False)
-            if poll_option_3.value != '':
-                embed.add_field(name='3️⃣', value=poll_option_3, inline=False)
-            if poll_option_4.value != '':
-                embed.add_field(name='4️⃣', value=poll_option_4, inline=False)
-            if poll_option_5.value != '':
-                embed.add_field(name='5️⃣', value=poll_option_5, inline=False)
-            if self.option6.value != '':
-                embed.add_field(name='6️⃣', value=self.option6, inline=False)
-            if self.option7.value != '':
-                embed.add_field(name='7️⃣', value=self.option7, inline=False)
-            if self.option8.value != '':
-                embed.add_field(name='8️⃣', value=self.option8, inline=False)
-            if self.option9.value != '':
-                embed.add_field(name='9️⃣', value=self.option9, inline=False)
-            if self.option10.value != '':
-                embed.add_field(name='🔟', value=self.option10, inline=False)
-            if isinstance(interaction.channel, discord.TextChannel):
-                #  if timer != 0:
-                #      embed.description = f'Poll Ends <t:{round(time.time()+int(timer*60))}:R>'
-                poll = await interaction.channel.send(embed=embed)
-                #  if timer != 0:
-                #      def timerend(Interaction:discord.Interaction, messageid, donottouch):
-                #          async def timerend2(Interaction:discord.Interaction, messageid, donottouch):
-                #              await total(Interaction, messageid, donottouch)
-                #          await timerend2(Interaction,messageid,donottouch)
-                #      pollTimer=Timer(timer, total, (Interaction,poll.id,True))
-                #      await pollTimer.start()
-                await poll.add_reaction('1️⃣')
-                await poll.add_reaction('2️⃣')
-                if poll_option_3.value != '':
-                    await poll.add_reaction('3️⃣')
-                if poll_option_4.value != '':
-                    await poll.add_reaction('4️⃣')
-                if poll_option_5.value != '':
-                    await poll.add_reaction('5️⃣')
-                if self.option6.value != '':
-                    await poll.add_reaction('6️⃣')
-                if self.option7.value != '':
-                    await poll.add_reaction('7️⃣')
-                if self.option8.value != '':
-                    await poll.add_reaction('8️⃣')
-                if self.option9.value != '':
-                    await poll.add_reaction('9️⃣')
-                if self.option10.value != '':
-                    await poll.add_reaction('🔟')
+        async def on_submit(self, interaction: discord.Interaction):
+            await interaction.response.send_message("Options 6-10 Set!", ephemeral=True)
 
     async def total(interaction: discord.Interaction,
                     message_id: str = '',
@@ -360,8 +276,111 @@ def import_command():
         description="Make a Poll"
     )
     async def gen_poll(interaction: discord.Interaction):
-        modal = PollModal()
-        await interaction.response.send_modal(modal)
+        view = discord.ui.View(timeout=None)
+
+        global message_modal
+        global question_modal
+        global description_modal
+        global poll_1_5_modal
+        global poll_6_10_modal
+        message_modal = messageModal()
+        question_modal = questionModal()
+        description_modal = descriptionModal()
+        poll_1_5_modal = poll_1_5Modal()
+        poll_6_10_modal = poll_6_10Modal()
+
+        async def message_callback(button):
+            await button.response.send_modal(message_modal)
+        message = discord.ui.Button(label="Message", style=discord.ButtonStyle.blurple, emoji="🗨️")
+        message.callback = message_callback
+        view.add_item(message)
+
+        async def question_callback(button):
+            await button.response.send_modal(question_modal)
+        question = discord.ui.Button(label="Question", style=discord.ButtonStyle.blurple, emoji="❓")
+        question.callback = question_callback
+        view.add_item(question)
+
+        async def description_callback(button):
+            await button.response.send_modal(description_modal)
+        description = discord.ui.Button(label="Description", style=discord.ButtonStyle.blurple, emoji="📄")
+        description.callback = description_callback
+        view.add_item(description)
+
+        async def poll_1_5_callback(button):
+            await button.response.send_modal(poll_1_5_modal)
+        poll_1_5 = discord.ui.Button(label="Options 1-5", style=discord.ButtonStyle.blurple, emoji="🔢")
+        poll_1_5.callback = poll_1_5_callback
+        view.add_item(poll_1_5)
+
+        async def poll_6_10_callback(button):
+            await button.response.send_modal(poll_6_10_modal)
+        poll_6_10 = discord.ui.Button(label="Options 6-10", style=discord.ButtonStyle.blurple, emoji="🔢")
+        poll_6_10.callback = poll_6_10_callback
+        view.add_item(poll_6_10)
+
+        async def submit_callback(button):
+            await button.response.send_message("Working...", ephemeral=True)
+            embed = discord.Embed(
+                title=f'Poll: {question_modal.question.value}',
+                description=description_modal.description.value,
+                color=discord.Color.green()
+            ).set_author(
+                name=button.user.name,
+                icon_url=button.user.avatar
+            )
+            embed.add_field(name='1️⃣', value=poll_1_5_modal.option1.value, inline=False)
+            embed.add_field(name='2️⃣', value=poll_1_5_modal.option2.value, inline=False)
+            if poll_1_5_modal.option3.value != '':
+                embed.add_field(name='3️⃣', value=poll_1_5_modal.option3.value, inline=False)
+            if poll_1_5_modal.option4.value != '':
+                embed.add_field(name='4️⃣', value=poll_1_5_modal.option4.value, inline=False)
+            if poll_1_5_modal.option5.value != '':
+                embed.add_field(name='5️⃣', value=poll_1_5_modal.option5.value, inline=False)
+            if poll_6_10_modal.option6.value != '':
+                embed.add_field(name='6️⃣', value=poll_6_10_modal.option6.value, inline=False)
+            if poll_6_10_modal.option7.value != '':
+                embed.add_field(name='7️⃣', value=poll_6_10_modal.option7.value, inline=False)
+            if poll_6_10_modal.option8.value != '':
+                embed.add_field(name='8️⃣', value=poll_6_10_modal.option8.value, inline=False)
+            if poll_6_10_modal.option9.value != '':
+                embed.add_field(name='9️⃣', value=poll_6_10_modal.option9.value, inline=False)
+            if poll_6_10_modal.option10.value != '':
+                embed.add_field(name='🔟', value=poll_6_10_modal.option10.value, inline=False)
+            if isinstance(interaction.channel, discord.TextChannel):
+                #  if timer != 0:
+                #      embed.description = f'Poll Ends <t:{round(time.time()+int(timer*60))}:R>'
+                poll = await interaction.channel.send(message_modal.message.value, embed=embed)
+                #  if timer != 0:
+                #      def timerend(Interaction:discord.Interaction, messageid, donottouch):
+                #          async def timerend2(Interaction:discord.Interaction, messageid, donottouch):
+                #              await total(Interaction, messageid, donottouch)
+                #          await timerend2(Interaction,messageid,donottouch)
+                #      pollTimer=Timer(timer, total, (Interaction,poll.id,True))
+                #      await pollTimer.start()
+                await poll.add_reaction('1️⃣')
+                await poll.add_reaction('2️⃣')
+                if poll_1_5_modal.option3.value != '':
+                    await poll.add_reaction('3️⃣')
+                if poll_1_5_modal.option4.value != '':
+                    await poll.add_reaction('4️⃣')
+                if poll_1_5_modal.option5.value != '':
+                    await poll.add_reaction('5️⃣')
+                if poll_6_10_modal.option6.value != '':
+                    await poll.add_reaction('6️⃣')
+                if poll_6_10_modal.option7.value != '':
+                    await poll.add_reaction('7️⃣')
+                if poll_6_10_modal.option8.value != '':
+                    await poll.add_reaction('8️⃣')
+                if poll_6_10_modal.option9.value != '':
+                    await poll.add_reaction('9️⃣')
+                if poll_6_10_modal.option10.value != '':
+                    await poll.add_reaction('🔟')
+
+        submit = discord.ui.Button(label="Submit", style=discord.ButtonStyle.green, emoji="✅")
+        submit.callback = submit_callback
+        view.add_item(submit)
+        await interaction.response.send_message("Create a Poll", view=view, ephemeral=True)
 
     @poll_commands.command(
         name='total',
