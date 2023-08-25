@@ -16,6 +16,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 roles: dict[str, discord.Role] = {}
+aus_time = ""
 
 load_dotenv()
 if 'debug' in os.listdir('./'):
@@ -30,12 +31,16 @@ if token is None:
 async def aussie_tz():
     aussie_timezone = timezone("Australia/Adelaide")
     aussie_time = datetime.now(aussie_timezone)
-    for guild in client.guilds:
-        if guild.name == "Garbage Stream":
-            generate_gif(aussie_time.strftime('%H:%M'), aussie_time.strftime('%H %M'), 1000, "aussie_clock.gif")
-            with open('aussie_clock.gif', 'rb') as f:
-                picture = f.read()
-            await guild.edit(banner=picture)
+    global aus_time
+    if aussie_time.strftime('%H:%M') != aus_time:
+        for guild in client.guilds:
+            if guild.name == "Garbage Stream":
+                generate_gif(aussie_time.strftime('%H:%M'), aussie_time.strftime('%H %M'), 1000, "aussie_clock.gif")
+                with open('aussie_clock.gif', 'rb') as f:
+                    picture = f.read()
+                await guild.edit(banner=picture)
+                aus_time = aussie_time.strftime('%H:%M')
+
             
             
 @client.event
@@ -46,6 +51,5 @@ async def on_ready():
 
     while True:
         await aussie_tz()
-        await asyncio.sleep(60)
         
 client.run(token)
