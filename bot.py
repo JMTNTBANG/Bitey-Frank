@@ -355,7 +355,7 @@ def start():
             if asset.endswith(('jpg', 'jpeg', 'png', 'webp', 'gif')):
                 assets.append(f'assets/{asset}')
 
-        await client.tree.sync()
+        await tree.sync()
 
     @client.event
     async def on_member_join(member):
