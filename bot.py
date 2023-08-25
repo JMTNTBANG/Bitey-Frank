@@ -1,19 +1,25 @@
 import asyncio
+import datetime
 import os
 import re
 import time
 from os import getenv
 from random import choice
 from typing import Any
+from datetime import datetime
+from pytz import timezone
 
 import discord
 import requests
 from discord import Client
 from discord.app_commands import CommandTree
+from discord.ext import tasks
+from discord.ext import commands
 from dotenv import load_dotenv
 import csv
 
 from youtube_tools import get_latest_video
+from image_tools import generate_image
 
 
 # Set Classes
@@ -61,7 +67,7 @@ intents.members = True
 intents.message_content = True
 
 # Set Client Variables
-client: Client = discord.Client(intents=intents)
+client = discord.Client(intents=intents)
 tree: CommandTree[Client | Any] = discord.app_commands.CommandTree(client)
 
 # Set Dynamic Variables
@@ -94,29 +100,7 @@ def print_emoji(emoji: str):
     return f'<:{emojis[emoji].name}:{emojis[emoji].id}>'
 
 
-async def check_channels():
-    async def checker(ytchannel):
-        a = get_latest_video(f'@{ytchannel}')
-        if f'{ytchannel}.txt' not in os.listdir('./youtube'):
-            open(f'youtube/{ytchannel}.txt', 'x')
-        if f'N: {a.title} U: {a.url} T: {a.published}' != open(f'youtube/{ytchannel}.txt', 'r').readline():
-            open(f'youtube/{ytchannel}.txt', 'w').write(f'N: {a.title} U: {a.url} T: {a.published}')
-            response = f'{roles[f"@{a.channel} Ping"].mention} New video by {a.channel}! `{a.title}`\n' \
-                       f'Uploaded <t:{int(a.published.timestamp())}:R>\n' \
-                       f'{a.url}'
-            for guild in client.guilds:
-                for channel in guild.text_channels:
-                    if channel.topic is not None:
-                        if 'YouTube Ping' in channel.topic:
-                            await channel.send(response)
 
-    await checker('Dankmus')
-    await checker('DankPods')
-    await checker('GarbageTime420')
-    await checker('the.drum.thing.')
-    await checker('Games_for_James')
-    await checker('JMTNTBANG')
-    await checker('joshdoesntplaydrums')
 
 
 async def member_status_update(in_server: bool, member):
@@ -371,7 +355,7 @@ def start():
             if asset.endswith(('jpg', 'jpeg', 'png', 'webp', 'gif')):
                 assets.append(f'assets/{asset}')
 
-        await tree.sync()
+        await client.tree.sync()
 
     @client.event
     async def on_member_join(member):
@@ -441,8 +425,4 @@ def start():
                                         await dm.send(message.content)
                                         break
 
-        if rolesLoaded and not debug:
-            await check_channels()
-
-    # Finalize Bot
     client.run(token)
