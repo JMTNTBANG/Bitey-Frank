@@ -36,7 +36,7 @@ async def aussie_tz():
     if aussie_time.strftime('%H:%M') != aus_time:
         for guild in client.guilds:
             if guild.name == "Garbage Stream":
-                generate_gif(aussie_time.strftime('%H:%M'), aussie_time.strftime('%H %M'), 1000, "aussie_clock.gif")
+                generate_gif(aussie_time.strftime('%H:%M'), aussie_time.strftime('%H %M'), 500, "aussie_clock.gif")
                 with open('aussie_clock.gif', 'rb') as f:
                     picture = f.read()
                 await guild.edit(banner=picture)
