@@ -41,15 +41,14 @@ async def yt_check():
                             await channel.send(response)
                             print(f"Sent {ytchannel} ping!")
 
-    print("start")
     await checker('Dankmus')
     await checker('DankPods')
     await checker('GarbageTime420')
     await checker('the.drum.thing.')
+    await checker('HelloImGaming')
     await checker('Games_for_James')
     await checker('JMTNTBANG')
     await checker('joshdoesntplaydrums')
-    print("done")
             
             
 @client.event
