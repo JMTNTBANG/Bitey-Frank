@@ -17,6 +17,7 @@ client = discord.Client(intents=intents)
 
 roles: dict[str, discord.Role] = {}
 aus_time = ""
+first_run = True
 synced = False
 
 load_dotenv()
@@ -41,8 +42,11 @@ async def aussie_tz():
                     picture = f.read()
                 await guild.edit(banner=picture)
                 aus_time = aussie_time.strftime('%H:%M')
-                global synced
-                synced = True
+                global first_run
+                if not first_run:
+                    global synced
+                    synced = True
+                first_run = False
 
 
 @client.event
@@ -52,8 +56,12 @@ async def on_ready():
             roles[f'@{role.name}'] = role
 
     while True:
+        global synced
         if synced:
+            print("not looping")
             await asyncio.sleep(60)
+        else:
+            print("looping")
         await aussie_tz()
         
 client.run(token)
