@@ -17,7 +17,6 @@ client = discord.Client(intents=intents)
 
 roles: dict[str, discord.Role] = {}
 aus_time = ""
-synced = False
 
 load_dotenv()
 if 'debug' in os.listdir('./'):
@@ -41,10 +40,9 @@ async def aussie_tz():
                     picture = f.read()
                 await guild.edit(banner=picture)
                 aus_time = aussie_time.strftime('%H:%M')
-                global synced
-                synced = True
 
-
+            
+            
 @client.event
 async def on_ready():
     for guild in client.guilds:
@@ -52,8 +50,6 @@ async def on_ready():
             roles[f'@{role.name}'] = role
 
     while True:
-        if synced:
-            await asyncio.sleep(60)
         await aussie_tz()
         
 client.run(token)
