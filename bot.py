@@ -1,25 +1,17 @@
 import asyncio
-import datetime
 import os
 import re
 import time
 from os import getenv
 from random import choice
 from typing import Any
-from datetime import datetime
-from pytz import timezone
 
 import discord
 import requests
 from discord import Client
 from discord.app_commands import CommandTree
-from discord.ext import tasks
-from discord.ext import commands
 from dotenv import load_dotenv
 import csv
-
-from youtube_tools import get_latest_video
-from image_tools import generate_image
 
 
 # Set Classes
