@@ -3,6 +3,7 @@ import os
 from youtube_tools import get_latest_video
 from dotenv import load_dotenv
 from os import getenv
+import asyncio
 
 # Set Bot Intents
 intents = discord.Intents.default()
@@ -59,5 +60,6 @@ async def on_ready():
 
     while True:
         await yt_check()
+        await asyncio.sleep(10)
         
 client.run(token)
