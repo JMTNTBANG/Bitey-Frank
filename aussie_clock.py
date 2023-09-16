@@ -47,7 +47,7 @@ async def aussie_tz():
                     _, _, w, h = draw.textbbox((0, 0), text, font=font)
                     draw.text(((1920 - w) / 2, (1080 - h) / 2), text, font=font)
                     images.append(image.copy())
-                    if text.startswith("09"):
+                    if text.startswith("09") and aussie_time.weekday() in range(0, 5):
                         font = ImageFont.truetype("./fixedsys.ttf", 125)
                         _, _, w, h = draw.textbbox((0, 0), "It's Goobin Time!", font=font)
                         draw.text(((1920 - w) / 2, (1400 - h) / 2), "It's Goobin Time!", font=font, fill="#00ff00")
