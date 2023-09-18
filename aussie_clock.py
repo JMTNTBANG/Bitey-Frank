@@ -73,5 +73,6 @@ async def on_ready():
 
     while True:
         await aussie_tz()
+        await asyncio.sleep(1)
         
 client.run(token)
