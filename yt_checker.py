@@ -25,33 +25,24 @@ if token is None:
     exit(1)
 
         
-async def yt_check():
-    async def checker(ytchannel):
-        a = get_latest_video(f'@{ytchannel}')
-        if f'{ytchannel}.txt' not in os.listdir('./youtube'):
-            open(f'youtube/{ytchannel}.txt', 'x')
-        if f'N: {a.title} U: {a.url} T: {a.published}' != open(f'youtube/{ytchannel}.txt', 'r').readline():
-            open(f'youtube/{ytchannel}.txt', 'w').write(f'N: {a.title} U: {a.url} T: {a.published}')
-            response = f'{roles[f"@{a.channel} Ping"].mention} New video by {a.channel}! `{a.title}`\n' \
-                f'Uploaded <t:{int(a.published.timestamp())}:R>\n' \
-                f'{a.url}'
-            for guild in client.guilds:
-                for channel in guild.text_channels:
-                    if channel.topic is not None:
-                        if 'YouTube Ping' in channel.topic:
-                            await channel.send(response)
-                            print(f"Sent {ytchannel} ping!")
 
-    await checker('Dankmus')
-    await checker('DankPods')
-    await checker('GarbageTime420')
-    await checker('the.drum.thing.')
-    await checker('HelloImGaming')
-    await checker('Games_for_James')
-    await checker('JMTNTBANG')
-    await checker('joshdoesntplaydrums')
-            
-            
+async def yt_checker(ytchannel):
+    a = get_latest_video(f'@{ytchannel}')
+    if f'{ytchannel}.txt' not in os.listdir('./youtube'):
+        open(f'youtube/{ytchannel}.txt', 'x')
+    if f'N: {a.title} U: {a.url} T: {a.published}' != open(f'youtube/{ytchannel}.txt', 'r').readline():
+        open(f'youtube/{ytchannel}.txt', 'w').write(f'N: {a.title} U: {a.url} T: {a.published}')
+        response = f'{roles[f"@{a.channel} Ping"].mention} New video by {a.channel}! `{a.title}`\n' \
+            f'Uploaded <t:{int(a.published.timestamp())}:R>\n' \
+            f'{a.url}'
+        for guild in client.guilds:
+            for channel in guild.text_channels:
+                if channel.topic is not None:
+                    if 'YouTube Ping' in channel.topic:
+                        await channel.send(response)
+                        print(f"Sent {ytchannel} ping!")
+
+
 @client.event
 async def on_ready():
     for guild in client.guilds:
@@ -59,7 +50,15 @@ async def on_ready():
             roles[f'@{role.name}'] = role
 
     while True:
-        await yt_check()
-        await asyncio.sleep(10)
+        checks = await asyncio.gather(
+            yt_checker('Dankmus'),
+            yt_checker('DankPods'),
+            yt_checker('GarbageTime420'),
+            yt_checker('the.drum.thing.'),
+            yt_checker('HelloImGaming'),
+            yt_checker('Games_for_James'),
+            yt_checker('JMTNTBANG'),
+            yt_checker('joshdoesntplaydrums'))
+        await asyncio.sleep(86400 / (10000 * len(checks))) # maximum 10000 YouTube API requests per day
         
 client.run(token)
