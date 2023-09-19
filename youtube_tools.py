@@ -2,7 +2,14 @@ import requests
 import re
 import googleapiclient.discovery
 import datetime
+from dotenv import load_dotenv
+from os import getenv
 
+load_dotenv()
+yt_key = getenv('YTAPIKEY')
+if yt_key is None:
+    print("Requires a YouTube Data API key")
+    exit(1)
 
 class YTVideo:
     def __init__(self, title, url, time, channel):
@@ -13,9 +20,7 @@ class YTVideo:
 
 
 def get_latest_video(channel_handle: str):
-    youtube = googleapiclient.discovery.build('youtube',
-                                              'v3',
-                                              developerKey='AIzaSyBP-99NKZanXgXFhymYq-5unmmXTNJ94Yk')
+    youtube = googleapiclient.discovery.build('youtube', 'v3', developerKey=yt_key)
 
     channel = f"https://www.youtube.com/{channel_handle}"
 
