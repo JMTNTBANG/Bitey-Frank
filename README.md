@@ -33,6 +33,7 @@ Next create a `.env` file to the top of the directory, then paste the following 
 ```bash
 TOKEN=<Your Main Bot Token Here>
 DEBUGTOKEN=<Your Debug Bot Token Here>
+YTAPIKEY=<Your YouTube Data API Key Here>
 ```
 
 ## Development
