@@ -52,6 +52,7 @@ async def aussie_tz():
                         _, _, w, h = draw.textbbox((0, 0), "It's Goobin Time!", font=font)
                         draw.text(((1920 - w) / 2, (1400 - h) / 2), "It's Goobin Time!", font=font, fill="#00ff00")
                         images.append(image)
+                        images[-1], images[-2] = images[-2], images[-1] # switch goobin' and non-goobin' message so goobin' is first frame
                 images[0].save(f"./aussie_clock.gif", save_all=True, append_images=images[1:], optimize=False, duration=1000/len(images), loop=0)
                 with open('aussie_clock.gif', 'rb') as f:
                     picture = f.read()
