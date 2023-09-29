@@ -35,6 +35,7 @@ TOKEN=<Your Main Bot Token Here>
 DEBUGTOKEN=<Your Debug Bot Token Here>
 YTAPIKEY=<Your YouTube Data API Key Here>
 ```
+A font named `fixedsys.ttf` is required in the directory to use the banner clock.
 
 ## Development
 
