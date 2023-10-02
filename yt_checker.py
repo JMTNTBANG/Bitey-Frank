@@ -50,6 +50,7 @@ async def on_ready():
             roles[f'@{role.name}'] = role
 
     while True:
+        from googleapiclient.errors import HttpError
         try:
             checks = await asyncio.gather(
                 yt_checker('Dankmus'),
@@ -62,11 +63,12 @@ async def on_ready():
                 yt_checker('joshdoesntplaydrums'))
         except HttpError:
             for guild in client.guilds:
-            for channel in guild.text_channels:
-                if channel.topic is not None:
-                    if 'YouTube Ping' in channel.topic:
-                        await channel.send("<@348935840501858306> Help, google api is being a dingus again :/")
+                for channel in guild.text_channels:
+                    if channel.topic is not None:
+                        if 'YouTube Ping' in channel.topic:
+                            await channel.send("<@348935840501858306> Help, google api is being a dingus again :/")
                         print(f"Google API Error")
-        await asyncio.sleep(86400 / (7500 * len(checks))) # maximum 10000 YouTube API requests per day
+        else:
+            await asyncio.sleep(86400 / (7500 * len(checks)))  # maximum 7500 YouTube API requests per day
         
 client.run(token)
