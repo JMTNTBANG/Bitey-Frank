@@ -59,6 +59,6 @@ async def on_ready():
             yt_checker('Games_for_James'),
             yt_checker('JMTNTBANG'),
             yt_checker('joshdoesntplaydrums'))
-        await asyncio.sleep(86400 / (10000 * len(checks))) # maximum 10000 YouTube API requests per day
+        await asyncio.sleep(86400 / (7500 * len(checks))) # maximum 10000 YouTube API requests per day
         
 client.run(token)
