@@ -70,6 +70,6 @@ async def on_ready():
                         print(f"Google API Error")
             raise
         else:
-            await asyncio.sleep(86400 / (7500 * len(checks)))  # maximum 7500 YouTube API requests per day
+            await asyncio.sleep(300)
         
 client.run(token)
