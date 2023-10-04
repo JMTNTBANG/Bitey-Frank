@@ -68,6 +68,7 @@ async def on_ready():
                         if 'YouTube Ping' in channel.topic:
                             await channel.send("<@348935840501858306> Help, google api is being a dingus again :/")
                         print(f"Google API Error")
+            raise
         else:
             await asyncio.sleep(86400 / (7500 * len(checks)))  # maximum 7500 YouTube API requests per day
         
