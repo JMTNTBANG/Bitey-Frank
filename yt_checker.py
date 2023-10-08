@@ -53,7 +53,6 @@ async def on_ready():
     started = False
     while True:
         from googleapiclient.errors import HttpError
-            await asyncio.sleep(300)
         if started or str(datetime.datetime.now().minute).endswith("0") or str(datetime.datetime.now().minute).endswith("5"):
             started = True
             try:
@@ -75,5 +74,6 @@ async def on_ready():
                             print(f"Google API Error")
                 raise
             else:
+                await asyncio.sleep(150)
         
 client.run(token)
