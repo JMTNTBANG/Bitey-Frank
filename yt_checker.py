@@ -16,6 +16,17 @@ client = discord.Client(intents=intents)
 
 roles: dict[str, discord.Role] = {}
 
+channels: list = [
+    "Dankmus",
+    "DankPods",
+    "GarbageTime420",
+    "the.drum.thing.",
+    "HelloImGaming",
+    "Games_for_James",
+    "JMTNTBANG",
+    "joshdoesntplaydrums"
+]
+
 load_dotenv()
 if 'debug' in os.listdir('./'):
     token = getenv('DEBUGTOKEN')
@@ -57,16 +68,9 @@ async def on_ready():
 
     while True:
         from googleapiclient.errors import HttpError
-                checks = await asyncio.gather(
-                    yt_checker('Dankmus'),
-                    yt_checker('DankPods'),
-                    yt_checker('GarbageTime420'),
-                    yt_checker('the.drum.thing.'),
-                    yt_checker('HelloImGaming'),
-                    yt_checker('Games_for_James'),
-                    yt_checker('JMTNTBANG'),
-                    yt_checker('joshdoesntplaydrums'))
         try:
+            for channel in channels:
+                await (yt_checker(channel))
         except HttpError:
             for guild in client.guilds:
                 for channel in guild.text_channels:
