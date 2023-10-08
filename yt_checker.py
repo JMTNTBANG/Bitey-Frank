@@ -28,14 +28,14 @@ if token is None:
         
 
 async def yt_checker(ytchannel):
-    a = get_latest_video(f'@{ytchannel}')
+    latest_video = get_latest_video(f'@{ytchannel}')
     if f'{ytchannel}.txt' not in os.listdir('./youtube'):
         open(f'youtube/{ytchannel}.txt', 'x')
-    if f'N: {a.title} U: {a.url} T: {a.published}' != open(f'youtube/{ytchannel}.txt', 'r').readline():
-        open(f'youtube/{ytchannel}.txt', 'w').write(f'N: {a.title} U: {a.url} T: {a.published}')
-        response = f'{roles[f"@{a.channel} Ping"].mention} New video by {a.channel}! `{a.title}`\n' \
-            f'Uploaded <t:{int(a.published.timestamp())}:R>\n' \
-            f'{a.url}'
+    if f'N: {latest_video.title} U: {latest_video.url} T: {latest_video.published}' != open(f'youtube/{ytchannel}.txt', 'r').readline():
+        open(f'youtube/{ytchannel}.txt', 'w').write(f'N: {latest_video.title} U: {latest_video.url} T: {latest_video.published}')
+        response = f'{roles[f"@{latest_video.channel} Ping"].mention} New video by {latest_video.channel}! `{latest_video.title}`\n' \
+            f'Uploaded <t:{int(latest_video.published.timestamp())}:R>\n' \
+            f'{latest_video.url}'
         for guild in client.guilds:
             for channel in guild.text_channels:
                 if channel.topic is not None:
