@@ -25,6 +25,11 @@ if token is None:
     print('GIMMIE YO GODDAMN TOKEN B***CH')
     exit(1)
 
+
+def calc_wait_time(interval: float):
+    now = datetime.datetime.now()
+    return interval - ((now.minute * 60 + now.second) % interval)
+
         
 
 async def yt_checker(ytchannel):
@@ -50,12 +55,8 @@ async def on_ready():
         for role in guild.roles:
             roles[f'@{role.name}'] = role
 
-    started = False
     while True:
         from googleapiclient.errors import HttpError
-        if started or str(datetime.datetime.now().minute).endswith("0") or str(datetime.datetime.now().minute).endswith("5"):
-            started = True
-            try:
                 checks = await asyncio.gather(
                     yt_checker('Dankmus'),
                     yt_checker('DankPods'),
@@ -65,15 +66,17 @@ async def on_ready():
                     yt_checker('Games_for_James'),
                     yt_checker('JMTNTBANG'),
                     yt_checker('joshdoesntplaydrums'))
-            except HttpError:
-                for guild in client.guilds:
-                    for channel in guild.text_channels:
-                        if channel.topic is not None:
-                            if 'YouTube Ping' in channel.topic:
-                                await channel.send("<@348935840501858306> Help, google api is being a dingus again :/")
-                            print(f"Google API Error")
-                raise
-            else:
-                await asyncio.sleep(150)
+        try:
+        except HttpError:
+            for guild in client.guilds:
+                for channel in guild.text_channels:
+                    if channel.topic is not None:
+                        if 'YouTube Ping' in channel.topic:
+                            await channel.send("<@348935840501858306> Help, google api is being a dingus again :/")
+                        print(f"Google API Error")
+            raise
+        else:
+
+            await asyncio.sleep(calc_wait_time(300))
         
 client.run(token)
