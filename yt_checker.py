@@ -24,7 +24,8 @@ channels: list = [
     "HelloImGaming",
     "Games_for_James",
     "JMTNTBANG",
-    "joshdoesntplaydrums"
+    "joshdoesntplaydrums",
+    "camthehedgehog"
 ]
 
 load_dotenv()
