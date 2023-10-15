@@ -13,6 +13,18 @@ from discord.app_commands import CommandTree
 from dotenv import load_dotenv
 import csv
 
+from lyricsgenius import Genius
+
+GeniusAPI = None
+
+
+def strip_non_alpha(str):
+    mod_string = ""
+    for elem in str:
+        if elem.isalnum() or elem == ' ' or elem == '\n':
+            mod_string += elem
+    return mod_string
+
 
 # Set Classes
 class ButtonRole:
@@ -76,6 +88,11 @@ assets: list[str] = []
 imported_commands: list[str] = []
 rolesLoaded: bool = False
 debug: bool = False
+buffer = {
+    "song_name": "",
+    "song_artist": "",
+    "song_lyrics": ""
+}
 
 # Set Static Variables
 frank_emojis = [
@@ -172,7 +189,16 @@ def start():
         token = getenv('TOKEN')
     if token is None:
         print('GIMMIE YO GODDAMN TOKEN B***CH')
-        exit(1)
+        raise
+
+    genius_token = getenv('GENIUS')
+    if genius_token is None:
+        print('Please add the Genius API Token in .env')
+        raise
+    try:
+        GeniusAPI = Genius(genius_token, remove_section_headers=True, verbose=False)
+    except TypeError:
+        raise ValueError('Please try a new Access Token as this one did not work...')
 
     @client.event
     async def on_ready():
@@ -416,5 +442,36 @@ def start():
                                             await asyncio.sleep(len(message.content)/5)
                                         await dm.send(message.content)
                                         break
+
+        if not message.author.bot:
+            for guild in client.guilds:
+                if guild == message.guild:
+                    for channel in guild.text_channels:
+                        if channel.topic is not None:
+                            if "Current Song:" in channel.topic:
+                                if message.channel == channel:
+                                    title = channel.topic[15:channel.topic.find(" by ")]
+                                    artist = channel.topic[channel.topic.find(" by ")+4:]
+                                    if buffer["song_name"] != title or buffer["song_artist"] != artist:
+                                        song = GeniusAPI.search_song(title, artist)
+                                        lyrics = str(strip_non_alpha(song.lyrics).lower())
+                                        buffer["song_name"] = title
+                                        buffer["song_artist"] = artist
+                                        buffer["song_lyrics"] = lyrics
+                                    else:
+                                        lyrics = buffer["song_lyrics"]
+                                    query = str(strip_non_alpha(message.content).lower())
+
+                                    spot1 = lyrics.find(query)
+                                    lyric1 = lyrics[spot1:]
+                                    spot2 = lyric1.find("\n") + spot1
+
+                                    lyric1 = lyrics[spot2 + 1:]
+                                    spot1 = spot2 + 1
+                                    spot2 = lyric1.find("\n") + spot1
+
+                                    next_lyric = lyrics[spot1:spot2]
+                                    if next_lyric != "":
+                                        await channel.send(next_lyric)
 
     client.run(token)
