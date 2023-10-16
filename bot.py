@@ -472,6 +472,8 @@ def start():
 
                                     next_lyric = lyrics[spot1:spot2]
                                     if next_lyric != "":
+                                        async with message.channel.typing():
+                                            await asyncio.sleep(len(next_lyric) / 5)
                                         await channel.send(next_lyric)
 
     client.run(token)
