@@ -18,14 +18,6 @@ from lyricsgenius import Genius
 GeniusAPI = None
 
 
-def strip_non_alpha(str):
-    mod_string = ""
-    for elem in str:
-        if elem.isalnum() or elem == ' ' or elem == '\n':
-            mod_string += elem
-    return mod_string
-
-
 # Set Classes
 class ButtonRole:
     def __init__(self, role: discord.Role, style, emoji: str):
@@ -109,9 +101,6 @@ def print_emoji(emoji: str):
     return f'<:{emojis[emoji].name}:{emojis[emoji].id}>'
 
 
-
-
-
 async def member_status_update(in_server: bool, member):
     for channel in client.get_all_channels():
         if channel.guild == member.guild and member.guild.system_channel == channel:
@@ -123,65 +112,20 @@ async def member_status_update(in_server: bool, member):
                 break
 
 
-# async def send_button_roles(button_role: list, channel, message: str, dropdown: bool = False):
-#     def gen_callback(selected_role):
-#         async def button_callback(interaction: discord.Interaction):
-#             if interaction.user in selected_role.members:
-#                 await interaction.user.remove_roles(selected_role)  # type: ignore
-#                 await interaction.response.send_message(f'Removed Role: `{selected_role.name}`', ephemeral=True)
-#             else:
-#                 await interaction.user.add_roles(selected_role)  # type: ignore
-#                 await interaction.response.send_message(f'Added Role: `{selected_role.name}`', ephemeral=True)
-#         return button_callback
-#
-#     def gen_select_callback(role_dropdown: discord.ui.Select):
-#         async def select_callback(interaction: discord.Interaction):
-#             response = ''
-#             for dropdown_role in button_role:
-#                 if interaction.user in dropdown_role.role.members:
-#                     await interaction.user.remove_roles(dropdown_role.role)
-#                     response += f'Removed Role: `{dropdown_role.role.name}`\n'
-#             for dropdown_role in button_role:
-#                 if role_dropdown.values[0] == dropdown_role.label:
-#                     if interaction.user in dropdown_role.role.members:
-#                         await interaction.user.remove_roles(dropdown_role.role)
-#                         response += f'Removed Role: `{dropdown_role.role.name}`\n'
-#                     else:
-#                         await interaction.user.add_roles(dropdown_role.role)  # type: ignore
-#                         response += f'Added Role: `{dropdown_role.role.name}`\n'
-#             await interaction.response.send_message(response, ephemeral=True)
-#         return select_callback
-#
-#     view = discord.ui.View(timeout=None)
-#     if dropdown:
-#         select = discord.ui.Select()
-#         for role in button_role:
-#             option = discord.SelectOption(
-#                 label=role.label,
-#                 emoji=role.emoji
-#             )
-#             select.append_option(option)
-#         view.add_item(select)
-#         select.callback = gen_select_callback(select)
-#     else:
-#         for role in button_role:
-#             button = discord.ui.Button(
-#                 label=role.label,
-#                 style=role.style,
-#                 emoji=role.emoji
-#             )
-#             button.callback = gen_callback(role.role)
-#             view.add_item(button)
-#
-#     await channel.send(message, view=view)
+def strip_non_alpha(str):
+    mod_string = ""
+    for elem in str:
+        if elem.isalnum() or elem == ' ' or elem == '\n':
+            mod_string += elem
+    return mod_string
+
 
 # Regex to match frank with repeated characters
-
 LONG_FRANK_REGEX = re.compile(r"f+r+a+n+k+")
 
 
 def start():
-    # Load Token
+    # Load Tokens
     load_dotenv()
     if 'debug' in os.listdir('./'):
         token = getenv('DEBUGTOKEN')
@@ -200,9 +144,12 @@ def start():
     except TypeError:
         raise ValueError('Please try a new Access Token as this one did not work...')
 
+    # Bot Code
     @client.event
     async def on_ready():
         print(f'{client.user} active')
+
+        # Debug Mode Detection
         if 'debug' in os.listdir('./'):
             await client.change_presence(activity=discord.Game(name="Vet Simulator"), status=discord.Status.dnd)
             print('Bot Presence changed to \"Playing Vet Simulator\"')
@@ -260,114 +207,6 @@ def start():
                                 f'commands.{command[:-3]}.import_command()')
                             imported_commands.append(command)
 
-        # Send Button Roles (Disabled)
-        # for guild in client.guilds:
-        #     for channel in guild.text_channels:
-        #         if channel.topic != None:
-        #             if 'Button Roles' in channel.topic:
-        #                 await channel.purge()
-        #                 pingRoles = [
-        #                     buttonRole(
-        #                         role=roles['@General Announcement Ping'],
-        #                         style='gray',
-        #                         emoji='🔔'
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@DankPods Ping'],
-        #                         style='gray',
-        #                         emoji=printEmoji(':dankpods:')
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Garbage Time Ping'],
-        #                         style='gray',
-        #                         emoji=printEmoji(':tony:')
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Garbage Stream Morn Ping'],
-        #                         style='gray',
-        #                         emoji=printEmoji(':chonkfronk:')
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Garbage Stream Arvo Ping'],
-        #                         style='gray',
-        #                         emoji=printEmoji(':shrek:')
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@The Drum Thing Ping'],
-        #                         style='gray',
-        #                         emoji=printEmoji(':drumthing:')
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@JMTNTBANG Ping'],
-        #                         style='gray',
-        #                         emoji=printEmoji(':JMTNTBANG:')
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Josh Doesn\'t Play Drums Ping'],
-        #                         style='gray',
-        #                         emoji=printEmoji(':joshdoesntplaydrums:')
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Poll Ping'],
-        #                         style='gray',
-        #                         emoji='📊'
-        #                     )
-        #                 ]
-        #                 tonaRoles = [
-        #                     buttonRole(
-        #                         role=roles['@OG Tona'],
-        #                         style='gray',
-        #                         emoji=printEmoji(':tonatime:')
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Sky Hihi'],
-        #                         style='gray',
-        #                         emoji='☁️'
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Rollo Finito'],
-        #                         style='gray',
-        #                         emoji='🏁'
-        #                     )
-        #                 ]
-        #                 regionRoles = [
-        #                     buttonRole(
-        #                         role=roles['@Freedom Eagles'],
-        #                         style='Dropdown',
-        #                         emoji='🇺🇸'
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Tea Sippers'],
-        #                         style='Dropdown',
-        #                         emoji='🇬🇧'
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Kangaroos'],
-        #                         style='Dropdown',
-        #                         emoji='🇦🇺'
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@Meatball Kings'],
-        #                         style='Dropdown',
-        #                         emoji='🇸🇪'
-        #                     ),
-        #                     buttonRole(
-        #                         role=roles['@pain'],
-        #                         style='Dropdown',
-        #                         emoji='🇪🇸'
-        #                     )
-        #                 ]
-        #                 await send_button_roles(pingRoles,
-        #                                         channel,
-        #                                         'Click a Button to choose from various *Ping Roles*')
-        #                 await send_button_roles(tonaRoles,
-        #                                         channel,
-        #                                         'Click a Button to choose from various *Tona Roles*')
-        #                 await send_button_roles(regionRoles,
-        #                                         channel,
-        #                                         'Choose an item from the Dropdown to choose from various *Region Roles*',
-        #                                         dropdown=True)
-
         # Import Assets
         for asset in os.listdir('assets'):
             if asset.endswith(('jpg', 'jpeg', 'png', 'webp', 'gif')):
@@ -375,6 +214,8 @@ def start():
 
         await tree.sync()
 
+    ### MODULES ###
+    # Member Announcements
     @client.event
     async def on_member_join(member):
         await member_status_update(True, member)
@@ -383,12 +224,16 @@ def start():
     async def on_member_remove(member):
         await member_status_update(False, member)
 
+    # Message Based Modules
     @client.event
     async def on_message(message: discord.Message):
+
+        # Respond to Pings to the Bot
         if client.user in message.mentions:
             if message.author != client.user:
                 await message.channel.send(print_emoji(choice(frank_emojis)))
 
+        # Respond to Mentions of Frank or Snark Triggers as defined in snarks.csv
         if LONG_FRANK_REGEX.search(message.content.casefold()) is not None:
             with open('snarks.csv', 'r') as file:
                 snarks = csv.reader(file, delimiter=',')
@@ -410,6 +255,7 @@ def start():
                     if message.author != client.user:
                         await message.channel.send(print_emoji(choice(frank_emojis)))
 
+        # Forward DMS to the bot to channel threads on server
         if message.guild is None and not message.author.bot:
             thread_exists = False
             for guild in client.guilds:
@@ -443,6 +289,7 @@ def start():
                                         await dm.send(message.content)
                                         break
 
+        # Frank Sing-Along Module
         if not message.author.bot:
             for guild in client.guilds:
                 if guild == message.guild:
