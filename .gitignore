@@ -4,3 +4,6 @@ debug
 youtube/*
 snarks.csv
 *.pyc
+.idea/*
+.fleet/*
+.vscode/*
