@@ -2,7 +2,7 @@ import discord
 import os
 import asyncio
 from pytz import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from os import getenv
 from PIL import Image, ImageDraw, ImageFont
@@ -17,6 +17,13 @@ client = discord.Client(intents=intents)
 
 roles: dict[str, discord.Role] = {}
 aus_time = ""
+schedule = {
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0
+}
 
 load_dotenv()
 if 'debug' in os.listdir('./'):
@@ -66,7 +73,47 @@ async def aussie_tz():
                 # _, _, w, h = goobtime.textbbox((0, 0), "It's Goobin Time!", font=font)
                 # goobtime.text(((1920 - w) / 2, (1620 - h) / 2), "It's Goobin Time!", font=font)
                 # images.append(image1)
-            
+
+
+async def goob_schedule_upd():
+    aussie_timezone = timezone("Australia/Adelaide")
+    aussie_date = datetime.now(aussie_timezone)
+    global schedule
+    this_week = {}
+    for day in range(5):
+        hour = 0
+        if day in (1, 2, 4):
+            hour = 9
+        elif day in (0, 3):
+            hour = 17
+        this_week[day] = aussie_date + timedelta(days=-aussie_date.weekday() + day,
+                                                 weeks=1,
+                                                 hours=-aussie_date.hour + hour,
+                                                 minutes=-aussie_date.minute,
+                                                 seconds=-aussie_date.second,
+                                                 microseconds=-aussie_date.microsecond)
+    if schedule != this_week:
+        schedule = this_week
+        for guild in client.guilds:
+            for channel in guild.text_channels:
+                if channel.topic is not None:
+                    if 'Schedule' in channel.topic:
+                        await channel.purge()
+                        schedule_message = (("||                                                                                            ||\n"
+                                            "> ## Monday: <t:{0}:d> <t:{0}:t> (<t:{0}:R>)\n"
+                                            "> ## Tuesday: <t:{1}:d> <t:{1}:t> (<t:{1}:R>)\n"
+                                            "> ## Wednesday: <t:{2}:d> <t:{2}:t> (<t:{2}:R>)\n"
+                                            "> ## Thursday: <t:{3}:d> <t:{3}:t> (<t:{3}:R>)\n"
+                                            "> ## Friday: <t:{4}:d> <t:{4}:t> (<t:{4}:R>)\n"
+                                            "||                                                                                            ||"
+                                             ).format(this_week[0].timestamp().__round__(),
+                                                      this_week[1].timestamp().__round__(),
+                                                      this_week[2].timestamp().__round__(),
+                                                      this_week[3].timestamp().__round__(),
+                                                      this_week[4].timestamp().__round__()))
+                        await channel.send(schedule_message)
+
+
 @client.event
 async def on_ready():
     for guild in client.guilds:
@@ -75,6 +122,7 @@ async def on_ready():
 
     while True:
         await aussie_tz()
+        await goob_schedule_upd()
         await asyncio.sleep(60 - datetime.now().second)
-        
+
 client.run(token)
