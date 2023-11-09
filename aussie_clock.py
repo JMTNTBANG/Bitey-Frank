@@ -81,8 +81,14 @@ def goob_schedule_upd():
     global schedule
     this_week = {}
     for day in range(5):
+        hour = 0
+        if day in (1, 2, 4):
+            hour = 9
+        elif day in (0, 3):
+            hour = 17
         this_week[day] = aussie_date + timedelta(days=-aussie_date.weekday() + day,
-                                                 weeks=1, hours=-aussie_date.hour,
+                                                 weeks=1,
+                                                 hours=-aussie_date.hour + hour,
                                                  minutes=-aussie_date.minute,
                                                  seconds=-aussie_date.second,
                                                  microseconds=-aussie_date.microsecond)
