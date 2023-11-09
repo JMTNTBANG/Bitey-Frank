@@ -1,9 +1,10 @@
 
 .env
 debug
-youtube/*
 snarks.csv
 *.pyc
-.idea/*
-.fleet/*
-.vscode/*
+/.fleet/
+/.vscode/
+/assets/
+/venv/
+/youtube/
