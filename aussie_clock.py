@@ -2,7 +2,7 @@ import discord
 import os
 import asyncio
 from pytz import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from os import getenv
 from PIL import Image, ImageDraw, ImageFont
@@ -17,6 +17,13 @@ client = discord.Client(intents=intents)
 
 roles: dict[str, discord.Role] = {}
 aus_time = ""
+schedule = {
+    "mon": 0,
+    "tue": 0,
+    "wed": 0,
+    "thu": 0,
+    "fri": 0
+}
 
 load_dotenv()
 if 'debug' in os.listdir('./'):
@@ -66,7 +73,21 @@ async def aussie_tz():
                 # _, _, w, h = goobtime.textbbox((0, 0), "It's Goobin Time!", font=font)
                 # goobtime.text(((1920 - w) / 2, (1620 - h) / 2), "It's Goobin Time!", font=font)
                 # images.append(image1)
-            
+
+
+def goob_schedule_upd():
+    aussie_timezone = timezone("Australia/Adelaide")
+    aussie_date = datetime.now(aussie_timezone)
+    global schedule
+    this_week = {}
+    for day in range(5):
+        this_week[day] = aussie_date + timedelta(days=-aussie_date.weekday() + day,
+                                                 weeks=1, hours=-aussie_date.hour,
+                                                 minutes=-aussie_date.minute,
+                                                 seconds=-aussie_date.second,
+                                                 microseconds=-aussie_date.microsecond)
+
+
 @client.event
 async def on_ready():
     for guild in client.guilds:
@@ -76,5 +97,5 @@ async def on_ready():
     while True:
         await aussie_tz()
         await asyncio.sleep(60 - datetime.now().second)
-        
+
 client.run(token)
