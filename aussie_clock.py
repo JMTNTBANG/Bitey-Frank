@@ -18,11 +18,11 @@ client = discord.Client(intents=intents)
 roles: dict[str, discord.Role] = {}
 aus_time = ""
 schedule = {
-    "mon": 0,
-    "tue": 0,
-    "wed": 0,
-    "thu": 0,
-    "fri": 0
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0
 }
 
 load_dotenv()
@@ -92,6 +92,25 @@ def goob_schedule_upd():
                                                  minutes=-aussie_date.minute,
                                                  seconds=-aussie_date.second,
                                                  microseconds=-aussie_date.microsecond)
+    # if schedule != this_week:
+    #     schedule = this_week
+    #     for guild in client.guilds:
+    #         for channel in guild.text_channels:
+    #             if channel.topic is not None:
+    #                 if 'Schedule' in channel.topic:
+    #                     await channel.purge()
+    schedule_message = (("||                                                                                            ||\n"
+                        "> ## Monday: <t:{0}:d> <t:{0}:t> (<t:{0}:R>)\n"
+                        "> ## Tuesday: <t:{1}:d> <t:{1}:t> (<t:{1}:R>)\n"
+                        "> ## Wednesday: <t:{2}:d> <t:{2}:t> (<t:{2}:R>)\n"
+                        "> ## Thursday: <t:{3}:d> <t:{3}:t> (<t:{3}:R>)\n"
+                        "> ## Friday: <t:{4}:d> <t:{4}:t> (<t:{4}:R>)\n"
+                        "||                                                                                            ||"
+                         ).format(this_week[0].timestamp().__round__(),
+                                  this_week[1].timestamp().__round__(),
+                                  this_week[2].timestamp().__round__(),
+                                  this_week[3].timestamp().__round__(),
+                                  this_week[4].timestamp().__round__()))
 
 
 @client.event
