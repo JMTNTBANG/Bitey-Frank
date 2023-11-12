@@ -87,7 +87,7 @@ async def goob_schedule_upd():
         elif day in (0, 3):
             hour = 17
         this_week[day] = aussie_date + timedelta(days=-aussie_date.weekday() + day,
-                                                 weeks=1,
+                                                 weeks=0,
                                                  hours=-aussie_date.hour + hour,
                                                  minutes=-aussie_date.minute,
                                                  seconds=-aussie_date.second,
