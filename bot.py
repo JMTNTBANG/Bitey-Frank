@@ -169,7 +169,7 @@ def start():
             for guild in client.guilds:
                 for channel in guild.text_channels:
                     if channel.topic is not None:
-                        if 'Bot Info' in channel.topic:
+                        if 'Github' in channel.topic:
                             await channel.send("```"
                                                "Applied previous commits"
                                                "```")
