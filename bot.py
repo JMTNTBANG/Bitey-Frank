@@ -158,13 +158,10 @@ def start():
             for guild in client.guilds:
                 for channel in guild.text_channels:
                     if channel.topic is not None:
-                        if 'Bot Info' in channel.topic:
-                            await channel.send(embed=discord.Embed(
-                                title='Online Status',
-                                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R> <@&106577353828125'
-                                            f'9009>',
-                                color=discord.Color.green()
-                                ))
+                        if 'Github' in channel.topic:
+                            await channel.send("```"
+                                               "Applied previous commits"
+                                               "```")
         else:
             await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
                                                                    name="my stinky poos"))
@@ -173,11 +170,9 @@ def start():
                 for channel in guild.text_channels:
                     if channel.topic is not None:
                         if 'Bot Info' in channel.topic:
-                            await channel.send(embed=discord.Embed(
-                                title='Online Status',
-                                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R>',
-                                color=discord.Color.green()
-                                ))
+                            await channel.send("```"
+                                               "Applied previous commits"
+                                               "```")
 
         # Channel Detection
         for guild in client.guilds:
