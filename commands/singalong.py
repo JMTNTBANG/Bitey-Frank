@@ -38,9 +38,16 @@ def import_command():
                         if "Current Song:" in channel.topic:
                             if interaction.channel == channel:
                                 song = GeniusAPI.search_song(song_title, artist)
+                                lyric_file = open("../lyrics.txt", "w")
                                 if song is None:
                                     await interaction.edit_original_response(content="Could not find that song, Please try again.")
                                 else:
-                                    await channel.edit(topic=f"Current Song: \"{song.title}\" by \"{song.artist}\"\n\n")
+                                    lyric_file.write(song.lyrics)
+                                    lyric_file.close()
+                                    # await channel.edit(topic=f"Current Song: \"{song.title}\" by \"{song.artist}\"\n\n")
                                     await interaction.edit_original_response(content=f"All Set! Start singing `{song.title}` by `{song.artist}` and ill join along!")
-
+                                    await channel.send(f'```\n'
+                                                       f'Song Change: \"{song.title}\" by \"{song.artist}\"\n'
+                                                       f'Changed by: {interaction.user.display_name}\n'
+                                                       f'```',
+                                                       file=discord.File("../lyrics.txt"))
