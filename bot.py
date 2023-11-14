@@ -322,5 +322,6 @@ def start():
                                         async with message.channel.typing():
                                             await asyncio.sleep(len(next_lyric) / 5)
                                         await channel.send(next_lyric)
+                                    buffer["song_lyrics"] = buffer["song_lyrics"][spot2:]
 
     client.run(token)
