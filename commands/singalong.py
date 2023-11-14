@@ -44,7 +44,7 @@ def import_command():
                                 else:
                                     lyric_file.write(song.lyrics)
                                     lyric_file.close()
-                                    # await channel.edit(topic=f"Current Song: \"{song.title}\" by \"{song.artist}\"\n\n")
+                                    await channel.edit(topic=f"Current Song: \"{song.title}\" by \"{song.artist}\"\n\n")
                                     await interaction.edit_original_response(content=f"All Set! Start singing `{song.title}` by `{song.artist}` and ill join along!")
                                     await channel.send(f'```\n'
                                                        f'Song Change: \"{song.title}\" by \"{song.artist}\"\n'
