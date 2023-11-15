@@ -83,7 +83,8 @@ debug: bool = False
 buffer = {
     "song_name": "",
     "song_artist": "",
-    "song_lyrics": ""
+    "song_lyrics": "",
+    "last_line": ""
 }
 
 # Set Static Variables
@@ -304,6 +305,9 @@ def start():
                                         lyrics = buffer["song_lyrics"]
                                     query = str(strip_non_alpha(message.content).lower())
 
+                                    if query == "frank u go":
+                                        query = buffer["last_line"]
+                                        await message.delete()
                                     spot1 = lyrics.find(query)
                                     lyric1 = lyrics[spot1:]
                                     spot2 = lyric1.find("\n") + spot1
@@ -318,5 +322,6 @@ def start():
                                             await asyncio.sleep(len(next_lyric) / 5)
                                         await channel.send(next_lyric)
                                     buffer["song_lyrics"] = buffer["song_lyrics"][spot2:]
+                                    buffer["last_line"] = next_lyric
 
     client.run(token)
