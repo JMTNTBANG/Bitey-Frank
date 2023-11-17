@@ -125,10 +125,10 @@ async def birthday_check():
             for guild in client.guilds:
                 for channel in guild.text_channels:
                     if channel.topic is not None and "YouTube Ping" in channel.topic:
-                                    if b_day.year > 1:
-                                        await channel.send(f'Merry {today.year - b_day.year}th Birthmas {user.mention}!')
-                                    else:
-                                        await channel.send(f'Merry Birthmas {user.mention}!')
+                        if b_day.year > 1:
+                            await channel.send(f'Merry {today.year - b_day.year}th Birthmas {user.mention}!')
+                        else:
+                            await channel.send(f'Merry Birthmas {user.mention}!')
 
 
 @client.event
