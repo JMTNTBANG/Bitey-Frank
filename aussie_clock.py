@@ -118,6 +118,7 @@ async def goob_schedule_upd():
 async def birthday_check():
     birthdays = json.loads(open("birthdays.json", "r").read())
     for b_day in birthdays:
+        user = client.get_user(b_day)
         today = datetime.today()
         b_day = datetime.fromtimestamp(birthdays[b_day])
         if today.month == b_day.month:
@@ -128,9 +129,9 @@ async def birthday_check():
                             if channel.topic is not None:
                                 if "YouTube Ping" in channel.topic:
                                     if b_day.year > 1:
-                                        await channel.send(f'Merry {today.year - b_day.year}th Birthmas {b_day}!')
+                                        await channel.send(f'Merry {today.year - b_day.year}th Birthmas {user.mention}!')
                                     else:
-                                        await channel.send(f'Merry Birthmas {b_day}!')
+                                        await channel.send(f'Merry Birthmas {user.mention}!')
 
 
 @client.event

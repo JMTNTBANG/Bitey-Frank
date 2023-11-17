@@ -22,7 +22,7 @@ def import_command():
     async def self(interaction: discord.Interaction, mm: int, dd: int, yyyy: int = 1):
         timestamp = datetime.datetime(yyyy, mm, dd).timestamp()
         birthdays = json.loads(open("birthdays.json", "r").read())
-        birthdays[interaction.user.display_name] = timestamp
+        birthdays[interaction.user.id] = timestamp
         update = open("birthdays.json", "w")
         update.write(json.dumps(birthdays, indent=3))
         update.close()
@@ -35,7 +35,7 @@ def import_command():
     # Code to Run Here
     async def self(interaction: discord.Interaction):
         birthdays = json.loads(open("birthdays.json", "r").read())
-        birthdays.pop(interaction.user.display_name)
+        birthdays.pop(interaction.user.id)
         update = open("birthdays.json", "w")
         update.write(json.dumps(birthdays, indent=3))
         update.close()
