@@ -31,7 +31,7 @@ def import_command():
     # Command Info
     @birthday_commands.command(
         name="remove",
-        description='No Longer Get birthday celebrations from frank'
+        description='No longer get birthday celebrations from Frank'
     )
     # Code to Run Here
     async def self(interaction: discord.Interaction):
