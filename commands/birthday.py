@@ -19,8 +19,8 @@ def import_command():
         name="set"
     )
     # Code to Run Here
-    async def self(interaction: discord.Interaction, b_month: int, b_day: int, b_year: int = 1):
-        timestamp = datetime.datetime(b_year, b_month, b_day).timestamp()
+    async def self(interaction: discord.Interaction, mm: int, dd: int, yyyy: int = 1):
+        timestamp = datetime.datetime(yyyy, mm, dd).timestamp()
         birthdays = json.loads(open("birthdays.json", "r").read())
         birthdays[interaction.user.display_name] = timestamp
         update = open("birthdays.json", "w")
