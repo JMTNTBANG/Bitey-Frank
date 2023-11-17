@@ -121,13 +121,10 @@ async def birthday_check():
         user = client.get_user(b_day)
         today = datetime.today()
         b_day = datetime.fromtimestamp(birthdays[b_day])
-        if today.month == b_day.month:
-            if today.day == b_day.day:
-                if today.hour == 14 and today.minute == 0:
-                    for guild in client.guilds:
-                        for channel in guild.text_channels:
-                            if channel.topic is not None:
-                                if "YouTube Ping" in channel.topic:
+        if (today.month, today.day, today.hour, today.minute) == (b_day.month, b_day.day, 14, 0):
+            for guild in client.guilds:
+                for channel in guild.text_channels:
+                    if channel.topic is not None and "YouTube Ping" in channel.topic:
                                     if b_day.year > 1:
                                         await channel.send(f'Merry {today.year - b_day.year}th Birthmas {user.mention}!')
                                     else:
