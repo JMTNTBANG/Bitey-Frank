@@ -24,9 +24,8 @@ def import_command():
         timestamp = datetime.datetime(yyyy, mm, dd).timestamp()
         birthdays = json.loads(open("birthdays.json", "r").read())
         birthdays[interaction.user.id] = timestamp
-        update = open("birthdays.json", "w")
-        update.write(json.dumps(birthdays, indent=3))
-        update.close()
+        with open("birthdays.json", "w") as update:
+            update.write(json.dumps(birthdays, indent=3))
         await interaction.response.send_message("Done!")
 
     # Command Info
@@ -38,9 +37,8 @@ def import_command():
     async def self(interaction: discord.Interaction):
         birthdays = json.loads(open("birthdays.json", "r").read())
         birthdays.pop(interaction.user.id)
-        update = open("birthdays.json", "w")
-        update.write(json.dumps(birthdays, indent=3))
-        update.close()
+        with open("birthdays.json", "w") as update:
+            update.write(json.dumps(birthdays, indent=3))
         await interaction.response.send_message("Done!")
 
     @birthday_commands.command(
