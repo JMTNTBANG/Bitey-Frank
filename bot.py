@@ -294,7 +294,7 @@ def start():
                             if "Current Song:" in channel.topic:
                                 if message.channel == channel:
                                     title = channel.topic[15:channel.topic.find(" by ")]
-                                    artist = channel.topic[channel.topic.find(" by ")+4:]
+                                    artist = channel.topic[channel.topic.find(" by ")+4:channel.topic.find("TIMESTAMP: ")-4]
                                     if buffer["song_name"] != title or buffer["song_artist"] != artist:
                                         song = GeniusAPI.search_song(title, artist)
                                         lyrics = str(strip_non_alpha(song.lyrics).lower())
