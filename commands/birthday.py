@@ -19,8 +19,14 @@ def import_command():
         name="set"
     )
     # Code to Run Here
-    async def self(interaction: discord.Interaction, b_month, b_day, b_year):
-        pass
+    async def self(interaction: discord.Interaction, b_month: int, b_day: int, b_year: int):
+        timestamp = datetime.datetime(b_year, b_month, b_day).timestamp()
+        birthdays = json.loads(open("birthdays.json", "r").read())
+        birthdays[interaction.user.display_name] = timestamp
+        update = open("birthdays.json", "w")
+        update.write(json.dumps(birthdays, indent=3))
+        update.close()
+        await interaction.response.send_message("Done!")
 
     # Command Info
     @birthday_commands.command(
