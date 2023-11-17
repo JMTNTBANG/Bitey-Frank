@@ -2,10 +2,11 @@ import discord
 import os
 import asyncio
 from pytz import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from dotenv import load_dotenv
 from os import getenv
 from PIL import Image, ImageDraw, ImageFont
+import json
 
 # Set Bot Intents
 intents = discord.Intents.default()
@@ -114,6 +115,22 @@ async def goob_schedule_upd():
                         await channel.send(schedule_message)
 
 
+async def birthday_check():
+    birthdays = json.loads(open("birthdays.json", "r").read())
+    for b_day in birthdays:
+        if datetime.today().month == datetime.fromtimestamp(birthdays[b_day]).month:
+            if datetime.today().day == datetime.fromtimestamp(birthdays[b_day]).day:
+                if datetime.today().hour == 14 and datetime.today().minute == 0:
+                    for guild in client.guilds:
+                        for channel in guild.text_channels:
+                            if channel.topic is not None:
+                                if "YouTube Ping" in channel.topic:
+                                    if datetime.fromtimestamp(birthdays[b_day]).year > 1:
+                                        await channel.send(f'Merry {datetime.today().year - datetime.fromtimestamp(birthdays[b_day]).year}th Birthmas {b_day}!')
+                                    else:
+                                        await channel.send(f'Merry Birthmas {b_day}!')
+
+
 @client.event
 async def on_ready():
     for guild in client.guilds:
@@ -123,6 +140,7 @@ async def on_ready():
     while True:
         await aussie_tz()
         await goob_schedule_upd()
+        await birthday_check()
         await asyncio.sleep(60 - datetime.now().second)
 
 client.run(token)
