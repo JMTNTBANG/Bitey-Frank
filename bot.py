@@ -83,7 +83,8 @@ debug: bool = False
 buffer = {
     "song_name": "",
     "song_artist": "",
-    "song_lyrics": ""
+    "song_lyrics": "",
+    "last_line": ""
 }
 
 # Set Static Variables
@@ -158,13 +159,10 @@ def start():
             for guild in client.guilds:
                 for channel in guild.text_channels:
                     if channel.topic is not None:
-                        if 'Bot Info' in channel.topic:
-                            await channel.send(embed=discord.Embed(
-                                title='Online Status',
-                                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R> <@&106577353828125'
-                                            f'9009>',
-                                color=discord.Color.green()
-                                ))
+                        if 'Github' in channel.topic:
+                            await channel.send("```"
+                                               "Applied previous commits"
+                                               "```")
         else:
             await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
                                                                    name="my stinky poos"))
@@ -172,12 +170,10 @@ def start():
             for guild in client.guilds:
                 for channel in guild.text_channels:
                     if channel.topic is not None:
-                        if 'Bot Info' in channel.topic:
-                            await channel.send(embed=discord.Embed(
-                                title='Online Status',
-                                description=f'Bitey Frank Online Since <t:{str(int(time.time()))}:R>',
-                                color=discord.Color.green()
-                                ))
+                        if 'Github' in channel.topic:
+                            await channel.send("```"
+                                               "Applied previous commits"
+                                               "```")
 
         # Channel Detection
         for guild in client.guilds:
@@ -298,7 +294,7 @@ def start():
                             if "Current Song:" in channel.topic:
                                 if message.channel == channel:
                                     title = channel.topic[15:channel.topic.find(" by ")]
-                                    artist = channel.topic[channel.topic.find(" by ")+4:]
+                                    artist = channel.topic[channel.topic.find(" by ")+4:channel.topic.find("TIMESTAMP: ")-4]
                                     if buffer["song_name"] != title or buffer["song_artist"] != artist:
                                         song = GeniusAPI.search_song(title, artist)
                                         lyrics = str(strip_non_alpha(song.lyrics).lower())
@@ -309,6 +305,9 @@ def start():
                                         lyrics = buffer["song_lyrics"]
                                     query = str(strip_non_alpha(message.content).lower())
 
+                                    if query == "frank u go":
+                                        query = buffer["last_line"]
+                                        await message.delete()
                                     spot1 = lyrics.find(query)
                                     lyric1 = lyrics[spot1:]
                                     spot2 = lyric1.find("\n") + spot1
@@ -322,5 +321,7 @@ def start():
                                         async with message.channel.typing():
                                             await asyncio.sleep(len(next_lyric) / 5)
                                         await channel.send(next_lyric)
+                                    buffer["song_lyrics"] = buffer["song_lyrics"][spot2:]
+                                    buffer["last_line"] = next_lyric
 
     client.run(token)
