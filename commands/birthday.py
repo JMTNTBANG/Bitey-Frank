@@ -17,7 +17,7 @@ def import_command():
     # Command Info
     @birthday_commands.command(
         name="set",
-        description='Get birthday celebrations from frank'
+        description='Get birthday celebrations from Frank'
     )
     # Code to Run Here
     async def self(interaction: discord.Interaction, mm: int, dd: int, yyyy: int = 1):
