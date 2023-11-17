@@ -8,7 +8,7 @@ def import_command():
 
     birthday_commands = discord.app_commands.Group(
         name='birthday',
-        description='Get birthday celebrations from frank'
+        description='Get birthday celebrations from Frank'
     )
 
     # Add Command group to tree
