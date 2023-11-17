@@ -16,7 +16,8 @@ def import_command():
 
     # Command Info
     @birthday_commands.command(
-        name="set"
+        name="set",
+        description='Get birthday celebrations from frank'
     )
     # Code to Run Here
     async def self(interaction: discord.Interaction, mm: int, dd: int, yyyy: int = 1):
@@ -30,7 +31,8 @@ def import_command():
 
     # Command Info
     @birthday_commands.command(
-        name="remove"
+        name="remove",
+        description='No Longer Get birthday celebrations from frank'
     )
     # Code to Run Here
     async def self(interaction: discord.Interaction):
@@ -40,3 +42,22 @@ def import_command():
         update.write(json.dumps(birthdays, indent=3))
         update.close()
         await interaction.response.send_message("Done!")
+
+    @birthday_commands.command(
+        name="list",
+        description='List birthdays'
+    )
+    # Code to Run Here
+    async def self(interaction: discord.Interaction):
+        birthdays = json.loads(open("birthdays.json", "r").read())
+        embed = discord.Embed(
+            title="Birthdays"
+        )
+        for birthday in birthdays:
+            user = interaction.guild.get_member(int(birthday))
+            birthday = datetime.datetime.fromtimestamp(birthdays[birthday])
+            if birthday.year > 1:
+                embed.add_field(name=user.display_name, value=birthday.strftime("%m/%d/%Y"))
+            else:
+                embed.add_field(name=user.display_name, value=birthday.strftime("%m/%d"))
+        await interaction.response.send_message(embed=embed)
