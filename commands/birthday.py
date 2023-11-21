@@ -36,7 +36,7 @@ def import_command():
     # Code to Run Here
     async def self(interaction: discord.Interaction):
         birthdays = json.loads(open("birthdays.json", "r").read())
-        birthdays.pop(interaction.user.id)
+        birthdays.pop(str(interaction.user.id))
         with open("birthdays.json", "w") as update:
             update.write(json.dumps(birthdays, indent=3))
         await interaction.response.send_message("Done!")
