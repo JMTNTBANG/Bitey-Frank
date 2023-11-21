@@ -23,7 +23,9 @@ def import_command():
     async def self(interaction: discord.Interaction, mm: int, dd: int, yyyy: int = 1):
         timestamp = datetime.datetime(yyyy, mm, dd).timestamp()
         birthdays = json.loads(open("birthdays.json", "r").read())
-        birthdays[interaction.user.id] = timestamp
+        birthdays[interaction.user.id] = {}
+        birthdays[interaction.user.id]["timestamp"] = timestamp
+        birthdays[interaction.user.id]["last_announced"] = 0
         with open("birthdays.json", "w") as update:
             update.write(json.dumps(birthdays, indent=3))
         await interaction.response.send_message("Done!")
@@ -53,7 +55,7 @@ def import_command():
         )
         for birthday in birthdays:
             user = interaction.guild.get_member(int(birthday))
-            birthday = datetime.datetime.fromtimestamp(birthdays[birthday])
+            birthday = datetime.datetime.fromtimestamp(int(birthdays[birthday]["timestamp"]))
             if birthday.year > 1:
                 embed.add_field(name=user.display_name, value=birthday.strftime("%m/%d/%Y"))
             else:
