@@ -1,10 +1,12 @@
-
 .env
+aussie_clock.gif
+birthdays.json
 debug
-snarks.csv
 *.pyc
-/.fleet/
-/.vscode/
+snarks.csv
 /assets/
+/.fleet/
+/.idea
+/.vscode/
 /venv/
 /youtube/
