@@ -130,7 +130,7 @@ async def birthday_check():
                             await channel.send(f'Merry {today.year - timestamp.year}th Birthmas {user.mention}!')
                         else:
                             await channel.send(f'Merry Birthmas {user.mention}!')
-                            birthdays[b_day]["last_announced"] = today.now().timestamp()
+                        birthdays[b_day]["last_announced"] = today.now().timestamp()
                         with open("birthdays.json", "w") as update:
                             update.write(json.dumps(birthdays, indent=3))
 
