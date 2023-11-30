@@ -31,3 +31,18 @@ def import_command():
                 await bot.start_playback(interaction.user.voice.channel)
         else:
             await interaction.response.send_message("Please Enter a Voice Channel First")
+
+    @player.command(
+        name="queue",
+        description="Show Song Queue"
+    )
+    async def self(interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="Song Queue"
+        )
+        number = 0
+        for song in bot.music_queue:
+            number += 1
+            video = pytube.YouTube(song)
+            embed.add_field(name=f"{number}. \"{video.title}\" by \"{video.author}\"", value=song, inline=False)
+        await interaction.response.send_message(embed=embed)
