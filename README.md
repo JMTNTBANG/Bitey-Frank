@@ -10,6 +10,7 @@ Have the following installed on your system:
 2. **[Pip](https://pip.pypa.io/en/stable/installation/)**
 
 3. And an IDE of your own choice (**[PyCharm](https://www.jetbrains.com/pycharm/)** or **[VS-Code](https://code.visualstudio.com/)** is recommended)
+4. A version of ffmpeg in your top directory (Folder must be named `ffmpeg` and only linux version is supported at the moment)
 
 
 

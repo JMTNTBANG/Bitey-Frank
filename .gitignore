@@ -8,5 +8,6 @@ snarks.csv
 /.fleet/
 /.idea
 /.vscode/
+/ffmpeg/
 /venv/
 /youtube/
