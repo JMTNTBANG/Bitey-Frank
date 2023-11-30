@@ -12,6 +12,7 @@ from discord import Client
 from discord.app_commands import CommandTree
 from dotenv import load_dotenv
 import csv
+import pytube
 
 from lyricsgenius import Genius
 
@@ -87,6 +88,7 @@ buffer = {
     "song_lyrics": "",
     "last_line": ""
 }
+music_queue = []
 
 # Set Static Variables
 frank_emojis = [
@@ -101,6 +103,20 @@ frank_emojis = [
 # Set Functions/Lambdas
 def print_emoji(emoji: str):
     return f'<:{emojis[emoji].name}:{emojis[emoji].id}>'
+
+
+async def start_playback(channel: discord.VoiceChannel):
+    vc: discord.VoiceClient = await channel.connect()
+    location = 0
+    while music_queue:
+        song = music_queue[location]
+        video = pytube.YouTube(song)
+        video_loc = video.streams.get_audio_only().download()
+        vc.play(discord.FFmpegPCMAudio(video_loc, executable="./ffmpeg/ffmpeg"))
+        await asyncio.sleep(video.length + 5)
+        os.remove(video_loc)
+        music_queue.remove(song)
+    await vc.disconnect()
 
 
 async def member_status_update(in_server: bool, member):
