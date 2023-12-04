@@ -144,7 +144,7 @@ LONG_FRANK_REGEX = re.compile(r"f+r+a+n+k+")
 def start():
     # Load Tokens
     load_dotenv()
-    if 'debug' in os.listdir('./'):
+    if 'y' in input("Debug? (y/N) "):
         token = getenv('DEBUGTOKEN')
     else:
         token = getenv('TOKEN')
