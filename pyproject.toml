@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "Bitey-Frank"
+version = "0.1.0"
+description = "The official mascot of the unofficial Discord server of the Garbage Stream."
+authors = ["James Miller <32822936+JMTNTBANG@users.noreply.github.com>"]
+license = "MIT License"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+"discord.py" = "^2.3.2"
+python-dotenv = "^1.0.0"
+lyricsgenius = "^3.0.1"
+pytube = {git = "https://github.com/pytube/pytube"}
+scrapetube = "^2.5.1"
+parse = "^1.20.0"
+google-api-python-client = "^2.109.0"
+google-auth-httplib2 = "^0.1.1"
+google-auth-oauthlib = "^1.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
