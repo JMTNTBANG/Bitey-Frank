@@ -1,5 +1,4 @@
 import discord
-import os
 import asyncio
 from pytz import timezone
 from datetime import datetime, timedelta, time
