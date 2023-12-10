@@ -10,4 +10,4 @@ snarks.csv
 /.vscode/
 /ffmpeg/
 /venv/
-/youtube/
+youtube.json

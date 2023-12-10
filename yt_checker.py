@@ -1,10 +1,12 @@
 import discord
-import os
-from youtube_tools import get_latest_video
 from dotenv import load_dotenv
 from os import getenv
 import asyncio
 import datetime
+import json
+import scrapetube
+import googleapiclient.discovery
+import parse
 
 # Set Bot Intents
 intents = discord.Intents.default()
@@ -17,15 +19,15 @@ client = discord.Client(intents=intents)
 roles: dict[str, discord.Role] = {}
 
 channels: list = [
-    "Dankmus",
-    "DankPods",
-    "GarbageTime420",
-    "the.drum.thing.",
-    "HelloImGaming",
-    "Games_for_James",
-    "JMTNTBANG",
-    "joshdoesntplaydrums",
-    "camthehedgehog"
+    "UCfITAHFPUbFwCbMYrhMJJCw",
+    "UC7Jwj9fkrf1adN4fMmTkpug",
+    "UCHdpnvKJDijKNe2caIasnww",
+    "UCufzX8bG4LkzqKEm7J7W7UA",
+    "UCbe4uwVthVsNhd7TF-mjj4A",
+    "UCx6cailiCkg_mlMM7JX5yfA",
+    "UC9Mu1sUuXviMxGULly4z2bg",
+    "UCfSdXuFC_dnTcVA1V-aONKg",
+    "UCqATHHfnvslU3Wra503Vvlw"
 ]
 
 load_dotenv()
@@ -38,27 +40,50 @@ if token is None:
     exit(1)
 
 
+class Video:
+    def __init__(self, vid_id: str):
+        ytapi = googleapiclient.discovery.build("youtube", "v3", developerKey=getenv("YTAPIKEY"))
+        request = ytapi.videos().list(part="snippet", id=vid_id)
+        response = request.execute()
+        snippet = response["items"][0]["snippet"]
+        self.id: str = response["items"][0]["id"]
+        pub = parse.parse("{yyyy}-{mm}-{dd}T{HH}:{MM}:{SS}Z", snippet["publishedAt"])
+        self.published_at: datetime.datetime = datetime.datetime(int(pub["yyyy"]), int(pub["mm"]), int(pub["dd"]), int(pub["HH"]), int(pub["MM"]), int(pub["SS"]))
+        self.channel_id: str = snippet["channelId"]
+        self.title: str = snippet["title"]
+        self.channel_title: str = snippet["channelTitle"]
+        self.url: str = f"https://www.youtube.com/watch?v={self.id}"
+
+
 def calc_wait_time(interval: float):
     now = datetime.datetime.now()
     return interval - ((now.minute * 60 + now.second) % interval)
 
-        
 
-async def yt_checker(ytchannel):
-    latest_video = get_latest_video(f'@{ytchannel}')
-    if f'{ytchannel}.txt' not in os.listdir('./youtube'):
-        open(f'youtube/{ytchannel}.txt', 'x')
-    if f'N: {latest_video.title} U: {latest_video.url} T: {latest_video.published}' != open(f'youtube/{ytchannel}.txt', 'r').readline():
-        open(f'youtube/{ytchannel}.txt', 'w').write(f'N: {latest_video.title} U: {latest_video.url} T: {latest_video.published}')
-        response = f'{roles[f"@{latest_video.channel} Ping"].mention} New video by {latest_video.channel}! `{latest_video.title}`\n' \
-            f'Uploaded <t:{int(latest_video.published.timestamp())}:R>\n' \
-            f'{latest_video.url}'
+async def yt_checker(channel_id):
+    channel = scrapetube.get_channel(channel_id)
+    latest_video = None
+    for video in channel:
+        latest_video = video
+        break
+    video = Video(latest_video["videoId"])
+    channel_cache = json.loads(open("youtube.json", "r").read())
+    if video.channel_id not in channel_cache:
+        channel_cache[video.channel_id] = {"title": "", "timestamp": ""}
+    if (channel_cache[video.channel_id]["title"], channel_cache[video.channel_id]["timestamp"]) != (video.title, video.published_at.timestamp()):
+        channel_cache[video.channel_id]["title"] = video.title
+        channel_cache[video.channel_id]["timestamp"] = video.published_at.timestamp()
+        with open(f'youtube.json', 'w') as update:
+            update.write(json.dumps(channel_cache, indent=4))
+        response = f'{roles[f"@{video.channel_title} Ping"].mention} New video by {video.channel_title}! `{video.title}`\n' \
+            f'Uploaded <t:{int(video.published_at.timestamp())}:R>\n' \
+            f'{video.url}'
         for guild in client.guilds:
             for channel in guild.text_channels:
                 if channel.topic is not None:
                     if 'YouTube Ping' in channel.topic:
                         await channel.send(response)
-                        print(f"Sent {ytchannel} ping!")
+                        print(f"Sent {video.channel_title} ping!")
 
 
 @client.event
@@ -79,9 +104,8 @@ async def on_ready():
                         if 'YouTube Ping' in channel.topic:
                             await channel.send("<@348935840501858306> Help, google api is being a dingus again :/")
                         print(f"Google API Error")
-            raise
         else:
 
             await asyncio.sleep(calc_wait_time(300))
-        
+
 client.run(token)
