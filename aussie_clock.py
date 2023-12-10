@@ -27,7 +27,7 @@ schedule = {
 }
 
 load_dotenv()
-if 'debug' in os.listdir('./'):
+if 'y' in input("Debug? (y/N) "):
     token = getenv('DEBUGTOKEN')
 else:
     token = getenv('TOKEN')
