@@ -108,7 +108,7 @@ def print_emoji(emoji: str):
 async def start_playback(channel: discord.VoiceChannel):
     vc: discord.VoiceClient = await channel.connect()
     while music_queue:
-        song = music_queue[0]
+        song = music_queue[0][0]
         video = pytube.YouTube(song)
         video_loc = video.streams.get_audio_only().download()
         vc.play(discord.FFmpegPCMAudio(video_loc, executable="./ffmpeg/ffmpeg"))

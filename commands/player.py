@@ -24,7 +24,7 @@ def import_command():
     async def self(interaction: discord.Interaction, url: str):
         if interaction.user.voice is not None:
             await interaction.response.send_message("Working...")
-            bot.music_queue.append(url)
+            bot.music_queue.append((url, interaction.user.id))
             await interaction.edit_original_response(
                 content=f"Done! Added `{pytube.YouTube(url).title}` to the Queue")
             if len(bot.music_queue) == 1:
@@ -43,6 +43,6 @@ def import_command():
         number = 0
         for song in bot.music_queue:
             number += 1
-            video = pytube.YouTube(song)
-            embed.add_field(name=f"{number}. \"{video.title}\" by \"{video.author}\"", value=song, inline=False)
+            video = pytube.YouTube(song[0])
+            embed.add_field(name=f"{number}. \"{video.title}\" by \"{video.author}\"", value=f"{song[0]}\nAdded By: {interaction.guild.get_member(song[1]).mention}", inline=False)
         await interaction.response.send_message(embed=embed)
