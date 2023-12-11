@@ -115,7 +115,7 @@ async def start_playback(channel: discord.VoiceChannel):
         while vc.is_playing() or vc.is_paused():
             await asyncio.sleep(5)
         os.remove(video_loc)
-        music_queue.remove(song)
+        music_queue.remove(music_queue[0])
     await vc.disconnect()
 
 

@@ -68,3 +68,21 @@ def import_command():
                 await interaction.response.send_message(content="You are not in a voice channel, please join one and try again.")
         else:
             await interaction.response.send_message(content="Nothing is playing right now.")
+
+    @player.command(
+        name="skip",
+        description="Skip the current song (Instigator Only)"
+    )
+    async def self(interaction: discord.Interaction):
+        if bot.music_queue:
+            if interaction.user.voice is not None:
+                if bot.music_queue[0][1] == interaction.user.id:
+                    vc: discord.VoiceClient = interaction.guild.voice_client
+                    vc.stop()
+                    await interaction.response.send_message(content="Skipping...")
+                else:
+                    await interaction.response.send_message(content="You did not add this song, please ask the instigator or admin to skip.")
+            else:
+                await interaction.response.send_message(content="You are not in a voice channel, please join one and try again.")
+        else:
+            await interaction.response.send_message(content="Nothing is playing right now.")
