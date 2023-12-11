@@ -112,7 +112,8 @@ async def start_playback(channel: discord.VoiceChannel):
         video = pytube.YouTube(song)
         video_loc = video.streams.get_audio_only().download()
         vc.play(discord.FFmpegPCMAudio(video_loc, executable="./ffmpeg/ffmpeg"))
-        await asyncio.sleep(video.length + 5)
+        while vc.is_playing() or vc.is_paused():
+            await asyncio.sleep(5)
         os.remove(video_loc)
         music_queue.remove(song)
     await vc.disconnect()
