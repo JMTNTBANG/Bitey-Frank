@@ -86,3 +86,23 @@ def import_command():
                 await interaction.response.send_message(content="You are not in a voice channel, please join one and try again.")
         else:
             await interaction.response.send_message(content="Nothing is playing right now.")
+
+    @player.command(
+        name="remove",
+        description="Remove a song from the queue (Instigator Only)"
+    )
+    async def self(interaction: discord.Interaction, number: int):
+        if bot.music_queue:
+            if interaction.user.voice is not None:
+                if len(bot.music_queue) >= number > 1:
+                    if bot.music_queue[number-1][1] == interaction.user.id:
+                        bot.music_queue.remove(bot.music_queue[number-1])
+                        await interaction.response.send_message(content="Removed.")
+                    else:
+                        await interaction.response.send_message(content="You did not add this song, please ask the instigator or admin to remove.")
+                else:
+                    await interaction.response.send_message(content="Please choose a valid song in the Queue (use </player queue:1179688433350873129> for guidance)")
+            else:
+                await interaction.response.send_message(content="You are not in a voice channel, please join one and try again.")
+        else:
+            await interaction.response.send_message(content="Queue is currently empty")
