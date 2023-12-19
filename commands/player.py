@@ -24,7 +24,7 @@ def import_command():
     async def self(interaction: discord.Interaction, url: str):
         if interaction.user.voice is not None:
             await interaction.response.send_message("Working...")
-            bot.music_queue.append(url)
+            bot.music_queue.append((url, interaction.user.id))
             await interaction.edit_original_response(
                 content=f"Done! Added `{pytube.YouTube(url).title}` to the Queue")
             if len(bot.music_queue) == 1:
@@ -43,6 +43,66 @@ def import_command():
         number = 0
         for song in bot.music_queue:
             number += 1
-            video = pytube.YouTube(song)
-            embed.add_field(name=f"{number}. \"{video.title}\" by \"{video.author}\"", value=song, inline=False)
+            video = pytube.YouTube(song[0])
+            embed.add_field(name=f"{number}. \"{video.title}\" by \"{video.author}\"", value=f"{song[0]}\nAdded By: {interaction.guild.get_member(song[1]).mention}", inline=False)
         await interaction.response.send_message(embed=embed)
+
+    @player.command(
+        name="toggle-pause",
+        description="Play/Pause Current Playback (Instigator Only)"
+    )
+    async def self(interaction: discord.Interaction):
+        if bot.music_queue:
+            if interaction.user.voice is not None:
+                if bot.music_queue[0][1] == interaction.user.id or interaction.user.guild_permissions.manage_guild:
+                    vc: discord.VoiceClient = interaction.guild.voice_client
+                    if vc.is_playing():
+                        vc.pause()
+                        await interaction.response.send_message(content="Paused...")
+                    elif vc.is_paused():
+                        vc.resume()
+                        await interaction.response.send_message(content="Resuming...")
+                else:
+                    await interaction.response.send_message(content="You did not add this song, please ask the instigator or admin to pause.")
+            else:
+                await interaction.response.send_message(content="You are not in a voice channel, please join one and try again.")
+        else:
+            await interaction.response.send_message(content="Nothing is playing right now.")
+
+    @player.command(
+        name="skip",
+        description="Skip the current song (Instigator Only)"
+    )
+    async def self(interaction: discord.Interaction):
+        if bot.music_queue:
+            if interaction.user.voice is not None:
+                if bot.music_queue[0][1] == interaction.user.id or interaction.user.guild_permissions.manage_guild:
+                    vc: discord.VoiceClient = interaction.guild.voice_client
+                    vc.stop()
+                    await interaction.response.send_message(content="Skipping...")
+                else:
+                    await interaction.response.send_message(content="You did not add this song, please ask the instigator or admin to skip.")
+            else:
+                await interaction.response.send_message(content="You are not in a voice channel, please join one and try again.")
+        else:
+            await interaction.response.send_message(content="Nothing is playing right now.")
+
+    @player.command(
+        name="remove",
+        description="Remove a song from the queue (Instigator Only)"
+    )
+    async def self(interaction: discord.Interaction, number: int):
+        if bot.music_queue:
+            if interaction.user.voice is not None:
+                if len(bot.music_queue) >= number > 1:
+                    if bot.music_queue[number-1][1] == interaction.user.id or interaction.user.guild_permissions.manage_guild:
+                        bot.music_queue.remove(bot.music_queue[number-1])
+                        await interaction.response.send_message(content="Removed.")
+                    else:
+                        await interaction.response.send_message(content="You did not add this song, please ask the instigator or admin to remove.")
+                else:
+                    await interaction.response.send_message(content="Please choose a valid song in the Queue (use </player queue:1179688433350873129> for guidance)")
+            else:
+                await interaction.response.send_message(content="You are not in a voice channel, please join one and try again.")
+        else:
+            await interaction.response.send_message(content="Queue is currently empty")
