@@ -54,7 +54,7 @@ def import_command():
     async def self(interaction: discord.Interaction):
         if bot.music_queue:
             if interaction.user.voice is not None:
-                if bot.music_queue[0][1] == interaction.user.id:
+                if bot.music_queue[0][1] == interaction.user.id or interaction.user.guild_permissions.manage_guild:
                     vc: discord.VoiceClient = interaction.guild.voice_client
                     if vc.is_playing():
                         vc.pause()
@@ -76,7 +76,7 @@ def import_command():
     async def self(interaction: discord.Interaction):
         if bot.music_queue:
             if interaction.user.voice is not None:
-                if bot.music_queue[0][1] == interaction.user.id:
+                if bot.music_queue[0][1] == interaction.user.id or interaction.user.guild_permissions.manage_guild:
                     vc: discord.VoiceClient = interaction.guild.voice_client
                     vc.stop()
                     await interaction.response.send_message(content="Skipping...")
@@ -95,7 +95,7 @@ def import_command():
         if bot.music_queue:
             if interaction.user.voice is not None:
                 if len(bot.music_queue) >= number > 1:
-                    if bot.music_queue[number-1][1] == interaction.user.id:
+                    if bot.music_queue[number-1][1] == interaction.user.id or interaction.user.guild_permissions.manage_guild:
                         bot.music_queue.remove(bot.music_queue[number-1])
                         await interaction.response.send_message(content="Removed.")
                     else:
