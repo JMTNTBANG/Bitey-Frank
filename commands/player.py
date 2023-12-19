@@ -33,6 +33,41 @@ def import_command():
             await interaction.response.send_message("Please Enter a Voice Channel First")
 
     @player.command(
+        name="search",
+        description="Find Some Music to Commit in a Voice Channel Near you"
+    )
+    async def self(interaction: discord.Interaction, query: str):
+        def callback(url):
+            async def callback_function(interaction: discord.Interaction):
+                if interaction.user.voice is not None:
+                    await interaction.response.send_message("Working...")
+                    bot.music_queue.append((url, interaction.user.id))
+                    await interaction.edit_original_response(
+                        content=f"Done! Added `{pytube.YouTube(url).title}` to the Queue")
+                    if len(bot.music_queue) == 1:
+                        await bot.start_playback(interaction.user.voice.channel)
+                else:
+                    await interaction.response.send_message("Please Enter a Voice Channel First")
+            return callback_function
+
+        await interaction.response.send_message("Searching...")
+        embed = discord.Embed(
+            title=f"Results for {query}"
+        )
+        view = discord.ui.View(timeout=60)
+        search = pytube.Search(query)
+        i = 0
+        for result in search.results:
+            if i < 10:
+                i += 1
+                embed.add_field(name=f'{i}. \"{result.title}\" by {result.author}', value=result.watch_url,
+                                inline=False)
+                button = discord.ui.Button(label=str(i))
+                button.callback = callback(result.watch_url)
+                view.add_item(button)
+        await interaction.edit_original_response(content="Done!", embed=embed, view=view)
+
+    @player.command(
         name="queue",
         description="Show Song Queue"
     )
