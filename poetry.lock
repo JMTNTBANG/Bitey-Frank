@@ -287,6 +287,18 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "pillow"
+version = "10.1.0"
+description = "Python Imaging Library (Fork)"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.extras]
+docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-removed-in", "sphinxext-opengraph"]
+tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
+
+[[package]]
 name = "protobuf"
 version = "4.25.1"
 description = ""
@@ -372,6 +384,14 @@ type = "git"
 url = "https://github.com/pytube/pytube"
 reference = "master"
 resolved_reference = "a32fff39058a6f7e5e59ecd06a7467b71197ce35"
+
+[[package]]
+name = "pytz"
+version = "2023.3.post1"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "requests"
@@ -481,7 +501,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "7f425af44fa7acd089fdce3921d9b0108799c459d272041c7d58ecb83c3ce336"
+content-hash = "5daa3f7dab0dcf8d7fdb5d9055e82180bc6676b703f3cdf9e827951963d46e9f"
 
 [metadata.files]
 aiohttp = []
@@ -507,6 +527,7 @@ lyricsgenius = []
 multidict = []
 oauthlib = []
 parse = []
+pillow = []
 protobuf = []
 pyasn1 = []
 pyasn1-modules = []
@@ -515,6 +536,7 @@ pynacl = []
 pyparsing = []
 python-dotenv = []
 pytube = []
+pytz = []
 requests = []
 requests-oauthlib = []
 rsa = []
