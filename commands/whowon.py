@@ -121,7 +121,7 @@ def import_command():
             if not is_double:
                 value = ''
                 for user in reactors:
-                    value += f'{user}\n'
+                    value += f'{user.mention}\n'
                 embed.add_field(
                     name=f'**iPod Readers!** (Number: {number})',
                     value=value,
@@ -130,7 +130,7 @@ def import_command():
             else:
                 value = ''
                 for user in reactors:
-                    value += f'{user}\n'
+                    value += f'{user.mention}\n'
                 embed.add_field(
                     name=f'**Re-Roll Readers!** (Number: {number})',
                     value=value,
