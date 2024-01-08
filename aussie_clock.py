@@ -132,19 +132,19 @@ async def birthday_check():
                             update.write(json.dumps(birthdays, indent=3))
 
 
-async def channel_message_counts():
-    for guild in client.guilds:
-        for channel in guild.text_channels:
-            message_count = 0
-            async for message in channel.history(limit=None):
-                message_count += 1
-            if channel.topic is not None and "Total Messages: " in channel.topic:
-                topic = f"{channel.topic[0:channel.topic.find('Total Messages: ')-1]}\nTotal Messages: {message_count}"
-            elif channel.topic is None:
-                topic = f"\nTotal Messages: {message_count}"
-            else:
-                topic = f"{channel.topic}\nTotal Messages: {message_count}"
-            await channel.edit(topic=topic)
+# async def channel_message_counts():
+#     for guild in client.guilds:
+#         for channel in guild.text_channels:
+#             message_count = 0
+#             async for message in channel.history(limit=None):
+#                 message_count += 1
+#             if channel.topic is not None and "Total Messages: " in channel.topic:
+#                 topic = f"{channel.topic[0:channel.topic.find('Total Messages: ')-1]}\nTotal Messages: {message_count}"
+#             elif channel.topic is None:
+#                 topic = f"\nTotal Messages: {message_count}"
+#             else:
+#                 topic = f"{channel.topic}\nTotal Messages: {message_count}"
+#             await channel.edit(topic=topic)
 
 
 @client.event
@@ -153,15 +153,10 @@ async def on_ready():
         for role in guild.roles:
             roles[f'@{role.name}'] = role
 
-    loop = 10
     while True:
         await aussie_tz()
         await goob_schedule_upd()
         await birthday_check()
-        if loop == 10:
-            await channel_message_counts()
-            loop = 0
-        loop += 1
         await asyncio.sleep(60 - datetime.now().second)
 
 client.run(token)
