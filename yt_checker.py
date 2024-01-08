@@ -31,7 +31,7 @@ channels: list = [
 ]
 
 load_dotenv()
-if 'y' in input("Debug? (y/N) ") and getenv('DEBUGTOKEN') is not None:
+if getenv('DEBUGTOKEN') is not None and 'y' in input("Debug? (y/N) "):
     token = getenv('DEBUGTOKEN')
 else:
     token = getenv('TOKEN')
