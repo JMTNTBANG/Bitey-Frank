@@ -123,7 +123,7 @@ def import_command():
                 for user in reactors:
                     value += f'{user}\n'
                 embed.add_field(
-                    name=f'**Magical Die Winners!** (Number: {number})',
+                    name=f'**iPod Readers!** (Number: {number})',
                     value=value,
                     inline=False
                     )
@@ -132,7 +132,7 @@ def import_command():
                 for user in reactors:
                     value += f'{user}\n'
                 embed.add_field(
-                    name=f'**Double Die Winners!** (Number: {number})',
+                    name=f'**Re-Roll Readers!** (Number: {number})',
                     value=value,
                     inline=False
                     )
