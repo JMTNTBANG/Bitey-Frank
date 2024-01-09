@@ -10,8 +10,28 @@ const frank = new Client({
   ],
 });
 
+const frank_emojis = [
+  "<:chonkfronk:1040418775129927752>",
+  "<:frank3:1040422477433675857>",
+  "<:sneakyfrank:1040419659792515213>",
+  "<:hideyhole:1042217416278692003>",
+  "<:jpeg:1042214971460829326>",
+];
+
+let loaded_emojis = {};
+
 frank.on("ready", (ctx) => {
-  console.log("Logged in as " + ctx.user.displayName);
+  console.log(`Logged in as ${ctx.user.tag}`);
+});
+
+frank.on("messageCreate", (ctx) => {
+  if (/f+r+a+n+k/i.test(ctx.content)) {
+    if (ctx.author.bot == false) {
+      ctx.channel.send(
+        frank_emojis[Math.floor(Math.random() * frank_emojis.length)]
+      );
+    }
+  }
 });
 
 frank.login(process.env.DEBUGTOKEN);
