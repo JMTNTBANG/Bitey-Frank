@@ -18,14 +18,12 @@ const frank_emojis = [
   "<:jpeg:1042214971460829326>",
 ];
 
-let loaded_emojis = {};
-
 frank.on("ready", (ctx) => {
   console.log(`Logged in as ${ctx.user.tag}`);
 });
 
 frank.on("messageCreate", (ctx) => {
-  if (/f+r+a+n+k/i.test(ctx.content)) {
+  if (/f+r+a+n+k/i.test(ctx.content) || ctx.content.includes(`<@${frank.user.id}>`))  {
     if (ctx.author.bot == false) {
       ctx.channel.send(
         frank_emojis[Math.floor(Math.random() * frank_emojis.length)]
