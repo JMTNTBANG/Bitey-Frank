@@ -1,0 +1,24 @@
+{
+  "name": "bitey-frank",
+  "version": "1.0.0",
+  "description": "The official mascot of the unofficial Discord server of the Garbage Stream.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JMTNTBANG/Bitey-Frank.git"
+  },
+  "author": "JMTNTBANG",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JMTNTBANG/Bitey-Frank/issues"
+  },
+  "homepage": "https://github.com/JMTNTBANG/Bitey-Frank#readme",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "prompt-sync": "^4.2.0"
+  }
+}
