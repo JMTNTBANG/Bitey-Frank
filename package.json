@@ -18,7 +18,6 @@
   "homepage": "https://github.com/JMTNTBANG/Bitey-Frank#readme",
   "dependencies": {
     "discord.js": "^14.14.1",
-    "dotenv": "^16.3.1",
     "prompt-sync": "^4.2.0"
   }
 }

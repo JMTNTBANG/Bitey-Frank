@@ -1,4 +1,4 @@
-.env
+config.json
 birthdays.json
 snarks.csv
 node_modules

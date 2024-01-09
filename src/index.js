@@ -1,4 +1,4 @@
-require("dotenv").config();
+const { token } = require('../config.json');
 const { Client, IntentsBitField } = require("discord.js");
 
 const frank = new Client({
@@ -23,7 +23,10 @@ frank.on("ready", (ctx) => {
 });
 
 frank.on("messageCreate", (ctx) => {
-  if (/f+r+a+n+k/i.test(ctx.content) || ctx.content.includes(`<@${frank.user.id}>`))  {
+  if (
+    /f+r+a+n+k/i.test(ctx.content) ||
+    ctx.content.includes(`<@${frank.user.id}>`)
+  ) {
     if (ctx.author.bot == false) {
       ctx.channel.send(
         frank_emojis[Math.floor(Math.random() * frank_emojis.length)]
