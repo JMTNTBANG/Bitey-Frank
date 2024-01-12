@@ -20,6 +20,11 @@ const frank_emojis = [
   "<:jpeg:1042214971460829326>",
 ];
 
+const assets = fs
+  .readdirSync("../assets/")
+  .filter((file) => file.endsWith(".png") || file.endsWith(".gif"));
+module.exports = { assets };
+
 // Command Loader
 frank.commands = new Collection();
 
