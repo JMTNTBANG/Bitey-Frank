@@ -8,6 +8,7 @@ const frank = new Client({
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildMembers,
     IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.GuildMessageReactions,
     IntentsBitField.Flags.MessageContent,
   ],
 });
