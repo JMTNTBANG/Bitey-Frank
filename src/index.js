@@ -1,7 +1,13 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { token } = require("../config.json");
-const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
+const {
+  Client,
+  Collection,
+  Events,
+  GatewayIntentBits,
+  ActivityType,
+} = require("discord.js");
 
 const frank = new Client({
   intents: [
@@ -9,7 +15,7 @@ const frank = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.MessageContent
+    GatewayIntentBits.MessageContent,
   ],
 });
 
@@ -53,6 +59,10 @@ for (const folder of commandFolders) {
 // Client Events
 frank.on(Events.ClientReady, (ctx) => {
   console.log(`Logged in as ${ctx.user.tag}`);
+  frank.user.setActivity({
+    name: "my stinky poos",
+    type: ActivityType.Watching,
+  });
 });
 
 frank.on(Events.InteractionCreate, async (ctx) => {
@@ -62,23 +72,7 @@ frank.on(Events.InteractionCreate, async (ctx) => {
     console.error(`No command matching ${ctx.commandName} was found.`);
     return;
   }
-
-  // try {
   await command.execute(ctx);
-//   } catch (error) {
-//     console.error(error);
-//     if (ctx.replied || ctx.deferred) {
-//       await ctx.followUp({
-//         content: "There was an error while executing this command!",
-//         ephemeral: true,
-//       });
-//     } else {
-//       await ctx.reply({
-//         content: "There was an error while executing this command!",
-//         ephemeral: true,
-//       });
-//     }
-//   }
 });
 
 frank.on(Events.MessageCreate, (ctx) => {
