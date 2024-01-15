@@ -1,15 +1,15 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { token } = require("../config.json");
-const { Client, Collection, Events, IntentsBitField } = require("discord.js");
+const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
 
 const frank = new Client({
   intents: [
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMembers,
-    IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.GuildMessageReactions,
-    IntentsBitField.Flags.MessageContent,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.MessageContent
   ],
 });
 
@@ -63,22 +63,22 @@ frank.on(Events.InteractionCreate, async (ctx) => {
     return;
   }
 
-  try {
-    await command.execute(ctx);
-  } catch (error) {
-    console.error(error);
-    if (ctx.replied || ctx.deferred) {
-      await ctx.followUp({
-        content: "There was an error while executing this command!",
-        ephemeral: true,
-      });
-    } else {
-      await ctx.reply({
-        content: "There was an error while executing this command!",
-        ephemeral: true,
-      });
-    }
-  }
+  // try {
+  await command.execute(ctx);
+//   } catch (error) {
+//     console.error(error);
+//     if (ctx.replied || ctx.deferred) {
+//       await ctx.followUp({
+//         content: "There was an error while executing this command!",
+//         ephemeral: true,
+//       });
+//     } else {
+//       await ctx.reply({
+//         content: "There was an error while executing this command!",
+//         ephemeral: true,
+//       });
+//     }
+//   }
 });
 
 frank.on(Events.MessageCreate, (ctx) => {

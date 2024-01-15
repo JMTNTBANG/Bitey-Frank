@@ -313,7 +313,7 @@ module.exports = {
             ctx.reply({ content: "Options 6-10 Set!", ephemeral: true });
           }
           poll_embed_preview
-            .setTitle(poll_info.question)
+            .setTitle(`Poll: ${poll_info.question}`)
             .setDescription(poll_info.description)
             .setFields();
           for (const field of poll_info.fields1) {
