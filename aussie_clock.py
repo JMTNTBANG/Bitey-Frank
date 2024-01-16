@@ -52,8 +52,7 @@ async def aussie_tz():
                     _, _, w, h = draw.textbbox((0, 0), text, font=font)
                     draw.text(((1920 - w) / 2, (1080 - h) / 2), text, font=font)
                     images.append(image.copy())
-                    if ( text.startswith("09") and aussie_time.weekday() in (1, 2, 4) or # 9 AM Tue, Wed, Fri
-                         text.startswith("17") and aussie_time.weekday() in (0, 3) ):    # 5 PM Mon, Thu
+                    if ( text.startswith("09") and aussie_time.weekday() in range(5) ):    # 9 AM Weekdays
                         font = ImageFont.truetype("./fixedsys.ttf", 125)
                         _, _, w, h = draw.textbbox((0, 0), "It's Goobin Time!", font=font)
                         draw.text(((1920 - w) / 2, (1400 - h) / 2), "It's Goobin Time!", font=font, fill="#00ff00")
@@ -79,14 +78,9 @@ async def goob_schedule_upd():
     global schedule
     this_week = {}
     for day in range(5):
-        hour = 0
-        if day in (1, 2, 4):
-            hour = 9
-        elif day in (0, 3):
-            hour = 17
         this_week[day] = aussie_date + timedelta(days=-aussie_date.weekday() + day,
                                                  weeks=0,
-                                                 hours=-aussie_date.hour + hour,
+                                                 hours=-aussie_date.hour + 9,
                                                  minutes=-aussie_date.minute,
                                                  seconds=-aussie_date.second,
                                                  microseconds=-aussie_date.microsecond)
