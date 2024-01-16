@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { token } = require("../config.json");
+const { token, frankSnarks } = require("../config.json");
 const {
   Client,
   Collection,
@@ -26,6 +26,12 @@ const frank_emojis = [
   "<:hideyhole:1042217416278692003>",
   "<:jpeg:1042214971460829326>",
 ];
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 const assets = fs
   .readdirSync("../assets/")
@@ -75,15 +81,30 @@ frank.on(Events.InteractionCreate, async (ctx) => {
   await command.execute(ctx);
 });
 
-frank.on(Events.MessageCreate, (ctx) => {
+frank.on(Events.MessageCreate, async (ctx) => {
   if (
     /f+r+a+n+k/i.test(ctx.content) ||
     ctx.content.includes(`<@${frank.user.id}>`)
   ) {
     if (ctx.author.bot == false) {
-      ctx.channel.send(
-        frank_emojis[Math.floor(Math.random() * frank_emojis.length)]
-      );
+      let isSnark = false;
+      for (const snark of frankSnarks) {
+        if (ctx.content.includes(snark.trigger)) {
+          isSnark = true;
+          ctx.channel.sendTyping()
+          await sleep(ctx.content.length*1000/5)
+          if (ctx == ctx.channel.lastMessage) {
+            ctx.channel.send(snark.response);
+          } else {
+            ctx.reply(snark.response)
+          }
+        }
+      }
+      if (isSnark === false) {
+        ctx.channel.send(
+          frank_emojis[Math.floor(Math.random() * frank_emojis.length)]
+        );
+      }
     }
   }
 });
