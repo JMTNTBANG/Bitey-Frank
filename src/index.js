@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { token, frankSnarks } = require("../config.json");
+const { token } = require("../config.json");
 const {
   Client,
   Collection,
@@ -87,8 +87,9 @@ frank.on(Events.MessageCreate, async (ctx) => {
     ctx.content.includes(`<@${frank.user.id}>`)
   ) {
     if (ctx.author.bot == false) {
+      var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
       let isSnark = false;
-      for (const snark of frankSnarks) {
+      for (const snark of configFile.frankSnarks) {
         if (ctx.content.includes(snark.trigger)) {
           isSnark = true;
           ctx.channel.sendTyping()

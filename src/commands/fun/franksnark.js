@@ -1,6 +1,5 @@
 const fs = require("node:fs");
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { frankSnarks } = require("../../../config.json");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -36,20 +35,23 @@ module.exports = {
       response: response,
       creator: ctx.user.id,
     });
-    fs.writeFileSync("../config.json", JSON.stringify(configFile));
-    await ctx.reply(
-      `Frank will now respond to \`${trigger}\` with \`${response}\``
-    );
+    fs.writeFileSync("../config.json", JSON.stringify(configFile, "", 2));
+    await ctx.reply({
+      content: `Frank will now respond to \`${trigger}\` with \`${response}\``,
+      ephemeral: true,
+    });
   },
 
   async list(ctx) {
+    var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
     const embed = new EmbedBuilder().setTitle("Frank Snarks");
-    for (const snark of frankSnarks) {
+    for (const snark of configFile.frankSnarks) {
       embed.addFields({
         name: `Trigger: \`${snark.trigger}\``,
-        value: `Response: \`${snark.response}\`\nCreator: ${ctx.client.users.cache.get(
-          snark.creator
-        )}`, inline: false
+        value: `Response: \`${
+          snark.response
+        }\`\nCreator: ${ctx.client.users.cache.get(snark.creator)}`,
+        inline: false,
       });
     }
     await ctx.reply({ embeds: [embed] });
