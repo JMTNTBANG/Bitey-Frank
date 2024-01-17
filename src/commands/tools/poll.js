@@ -183,7 +183,7 @@ module.exports = {
         name: ctx.user.username,
         iconURL: ctx.user.displayAvatarURL(),
       })
-      .setTitle("null")
+      .setTitle("Poll: null")
       .setDescription("null");
     const poll_builder = await ctx.reply({
       content: "```\nPoll Builder```\n### Preview:\nnull",
