@@ -1,4 +1,7 @@
-const { ContextMenuCommandBuilder, ApplicationCommandType } = require("discord.js");
+const {
+  ContextMenuCommandBuilder,
+  ApplicationCommandType,
+} = require("discord.js");
 
 module.exports = {
   data: new ContextMenuCommandBuilder()

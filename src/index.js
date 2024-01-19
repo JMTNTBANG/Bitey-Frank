@@ -1,5 +1,5 @@
-const fs = require("node:fs");
-const path = require("node:path");
+const fs = require("fs");
+const path = require("path");
 const { token } = require("../config.json");
 const {
   Client,
@@ -92,12 +92,12 @@ frank.on(Events.MessageCreate, async (ctx) => {
       for (const snark of configFile.frankSnarks) {
         if (ctx.content.includes(snark.trigger)) {
           isSnark = true;
-          ctx.channel.sendTyping()
-          await sleep(ctx.content.length*1000/5)
+          ctx.channel.sendTyping();
+          await sleep((ctx.content.length * 1000) / 5);
           if (ctx == ctx.channel.lastMessage) {
             ctx.channel.send(snark.response);
           } else {
-            ctx.reply(snark.response)
+            ctx.reply(snark.response);
           }
         }
       }

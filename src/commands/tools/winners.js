@@ -69,8 +69,8 @@ module.exports = {
       }
       await ctx.reply({ embeds: [embed] });
     } catch (error) {
-      await ctx.reply("Error Has Ocurred")
-      console.log(error)
+      await ctx.reply("Error Has Ocurred");
+      console.log(error);
     }
   },
 };

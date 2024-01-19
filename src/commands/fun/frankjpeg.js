@@ -1,4 +1,4 @@
-const path = require("node:path");
+const path = require("path");
 const { assets } = require("../../index.js");
 const { SlashCommandBuilder } = require("discord.js");
 
@@ -33,9 +33,7 @@ module.exports = {
         )
     )
     .addSubcommand((subcommand) =>
-      subcommand
-        .setName("list")
-        .setDescription("List Frank jpegs")
+      subcommand.setName("list").setDescription("List Frank jpegs")
     ),
 
   async num(ctx, num) {

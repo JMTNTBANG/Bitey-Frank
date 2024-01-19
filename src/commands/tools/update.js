@@ -5,7 +5,7 @@ module.exports = {
     .setName("update")
     .setDescription("Update the Bot to latest commits"),
   async execute(ctx) {
-    ctx.reply("Updating...")
-    throw new Error("Admin Requested Bot Update")
+    ctx.reply("Updating...");
+    throw new Error("Admin Requested Bot Update");
   },
 };
