@@ -4,7 +4,7 @@ const {
   ModalBuilder,
   ActionRowBuilder,
   TextInputBuilder,
-  TextInputStyle
+  TextInputStyle,
 } = require("discord.js");
 
 module.exports = {
@@ -25,8 +25,8 @@ module.exports = {
             .setRequired(true)
         )
       );
-    await ctx.channel.sendTyping()
-    await ctx.showModal(modal)
+    await ctx.channel.sendTyping();
+    await ctx.showModal(modal);
     const modalFilter = (ctx) => ctx.customId === `smaf-${ctx.user.id}`;
     ctx.awaitModalSubmit({ filter: modalFilter, time: 600_000 }).then((ctx) => {
       ctx.channel.send(ctx.fields.getTextInputValue("smaf_textbox"));

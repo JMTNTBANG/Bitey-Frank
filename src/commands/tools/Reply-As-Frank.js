@@ -4,7 +4,7 @@ const {
   ModalBuilder,
   ActionRowBuilder,
   TextInputBuilder,
-  TextInputStyle
+  TextInputStyle,
 } = require("discord.js");
 
 module.exports = {
@@ -25,12 +25,14 @@ module.exports = {
             .setRequired(true)
         )
       );
-    await ctx.channel.sendTyping()
-    await ctx.showModal(modal)
+    await ctx.channel.sendTyping();
+    await ctx.showModal(modal);
     const modalFilter = (ctx) => ctx.customId === `raf-${ctx.user.id}`;
-    ctx.awaitModalSubmit({ filter: modalFilter, time: 600_000 }).then((ctx2) => {
-      ctx.targetMessage.reply(ctx2.fields.getTextInputValue("raf_textbox"));
-      ctx2.reply({ content: "Message Sent!", ephemeral: true });
-    });
+    ctx
+      .awaitModalSubmit({ filter: modalFilter, time: 600_000 })
+      .then((ctx2) => {
+        ctx.targetMessage.reply(ctx2.fields.getTextInputValue("raf_textbox"));
+        ctx2.reply({ content: "Message Sent!", ephemeral: true });
+      });
   },
 };
