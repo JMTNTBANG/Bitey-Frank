@@ -2,3 +2,4 @@ config.json
 birthdays.json
 snarks.csv
 node_modules
+src/clock.png

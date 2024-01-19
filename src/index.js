@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const { token } = require("../config.json");
+const { createCanvas, registerFont } = require("canvas");
+const { token, guildId } = require("../config.json");
 const {
   Client,
   Collection,
@@ -31,6 +32,43 @@ function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
+}
+function calcTime(offset) {
+  var d = new Date();
+  var utc = d.getTime() + d.getTimezoneOffset() * 60000;
+  var nd = new Date(utc + 3600000 * offset);
+  return nd;
+}
+function aussie_clock() {
+  registerFont("../fixedsys.ttf", { family: "FixedSys" });
+  const width = 1920;
+  const height = 1080;
+  const picture = createCanvas(width, height);
+  const edit = picture.getContext("2d");
+  edit.fillStyle = "#000";
+  edit.fillRect(0, 0, width, height);
+  edit.font = '200pt "FixedSys"';
+  edit.textAlign = "center";
+  edit.textBaseline = "middle";
+  const time = calcTime("+10.5");
+  let hours = "";
+  let minutes = "";
+  if (time.getHours() > 9) {
+    hours = time.getHours();
+  } else {
+    hours = `0${time.getHours()}`;
+  }
+  if (time.getMinutes() > 9) {
+    minutes = time.getMinutes();
+  } else {
+    minutes = `0${time.getMinutes()}`;
+  }
+  const text = `${hours}:${minutes}`;
+  edit.fillStyle = "#fff";
+  edit.fillText(text, width / 2, height / 2);
+  frank.guilds.cache
+    .get(guildId)
+    .setBanner(picture.toBuffer("image/png"), "Aussie Clock Update");
 }
 
 const assets = fs
@@ -69,15 +107,18 @@ frank.on(Events.ClientReady, (ctx) => {
     name: "my stinky poos",
     type: ActivityType.Watching,
   });
+  const time1 = calcTime("+10.5");
+  const time2 = calcTime("+10.5");
+  time2.setSeconds(0);
+  time2.setMinutes(time2.getMinutes() + 1);
+  aussie_clock();
+  setTimeout(function () {
+    setInterval(aussie_clock, 60_000);
+  }, time2.getTime() - time1.getTime());
 });
 
 frank.on(Events.InteractionCreate, async (ctx) => {
   const command = ctx.client.commands.get(ctx.commandName);
-
-  if (!command) {
-    console.error(`No command matching ${ctx.commandName} was found.`);
-    return;
-  }
   await command.execute(ctx);
 });
 

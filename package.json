@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/JMTNTBANG/Bitey-Frank#readme",
   "dependencies": {
+    "canvas": "^2.11.2",
     "discord.js": "^14.14.1",
     "prompt-sync": "^4.2.0"
   }
