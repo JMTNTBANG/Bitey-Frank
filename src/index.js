@@ -70,6 +70,34 @@ function aussie_clock() {
     .get(guildId)
     .setBanner(picture.toBuffer("image/png"), "Aussie Clock Update");
 }
+function birthdays() {
+  var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
+  const todaysBirthdays = [];
+  for (const birthday in configFile.birthdays) {
+    const birthDate = new Date(configFile.birthdays[birthday].timestamp);
+    const today = new Date(Date.now());
+    if (
+      birthDate.getMonth() == today.getMonth() &&
+      birthDate.getDate() == today.getDate()
+    ) {
+      todaysBirthdays.push(birthday);
+    }
+  }
+  const channel = frank.guilds.cache
+    .get(guildId)
+    .channels.cache.find((channel) => channel.topic.includes("YouTube Ping"));
+  todaysBirthdays.forEach((birthday) => {
+    if (new Date(Date.now()).valueOf() - configFile.birthdays[birthday].last_announced > 86400000)
+    if (new Date(configFile.birthdays[birthday].timestamp).getFullYear() == 100) {
+    channel.send(`Merry Birthmas <@${birthday}>`);
+    } else {
+      const age = new Date(Date.now()).getFullYear() - new Date(configFile.birthdays[birthday].timestamp).getFullYear()
+      channel.send(`Merry ${age}th Birthmas <@${birthday}>`)
+    }
+    configFile.birthdays[birthday].last_announced = new Date(Date.now()).valueOf()
+    fs.writeFileSync("../config.json", JSON.stringify(configFile, "", 2));
+  });
+}
 
 const assets = fs
   .readdirSync("../assets/")
@@ -115,6 +143,8 @@ frank.on(Events.ClientReady, (ctx) => {
   setTimeout(function () {
     setInterval(aussie_clock, 60_000);
   }, time2.getTime() - time1.getTime());
+  birthdays();
+  setInterval(birthdays, 60_000);
 });
 
 frank.on(Events.InteractionCreate, async (ctx) => {
