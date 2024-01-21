@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { createCanvas, registerFont } = require("canvas");
-const { token, guildId } = require("../config.json");
+const { token, guildId, specialChannels } = require("../config.json");
 const {
   Client,
   Collection,
@@ -83,18 +83,28 @@ function birthdays() {
       todaysBirthdays.push(birthday);
     }
   }
-  const channel = frank.guilds.cache
-    .get(guildId)
-    .channels.cache.find((channel) => channel.topic.includes("YouTube Ping"));
+  const channel = frank.guilds
+    .resolve(guildId)
+    .channels.resolve(specialChannels["youtube_ping"]);
   todaysBirthdays.forEach((birthday) => {
-    if (new Date(Date.now()).valueOf() - configFile.birthdays[birthday].last_announced > 86400000)
-    if (new Date(configFile.birthdays[birthday].timestamp).getFullYear() == 100) {
-    channel.send(`Merry Birthmas <@${birthday}>`);
-    } else {
-      const age = new Date(Date.now()).getFullYear() - new Date(configFile.birthdays[birthday].timestamp).getFullYear()
-      channel.send(`Merry ${age}th Birthmas <@${birthday}>`)
-    }
-    configFile.birthdays[birthday].last_announced = new Date(Date.now()).valueOf()
+    if (
+      new Date(Date.now()).valueOf() -
+        configFile.birthdays[birthday].last_announced >
+      86400000
+    )
+      if (
+        new Date(configFile.birthdays[birthday].timestamp).getFullYear() == 100
+      ) {
+        channel.send(`Merry Birthmas <@${birthday}>`);
+      } else {
+        const age =
+          new Date(Date.now()).getFullYear() -
+          new Date(configFile.birthdays[birthday].timestamp).getFullYear();
+        channel.send(`Merry ${age}th Birthmas <@${birthday}>`);
+      }
+    configFile.birthdays[birthday].last_announced = new Date(
+      Date.now()
+    ).valueOf();
     fs.writeFileSync("../config.json", JSON.stringify(configFile, "", 2));
   });
 }
@@ -127,7 +137,7 @@ for (const folder of commandFolders) {
     }
   }
 }
-console.log("Commands Loaded!")
+console.log("Commands Loaded!");
 
 // Client Events
 frank.on(Events.ClientReady, (ctx) => {
@@ -143,9 +153,9 @@ frank.on(Events.ClientReady, (ctx) => {
   setTimeout(function () {
     setInterval(aussie_clock, 60_000);
   }, time2.getTime() - time1.getTime());
-  console.log("Ready!")
-  // birthdays();
-  // setInterval(birthdays, 60_000);
+  birthdays();
+  setInterval(birthdays, 60_000);
+  console.log("Ready!");
 });
 
 frank.on(Events.InteractionCreate, async (ctx) => {
