@@ -26,6 +26,9 @@ module.exports = {
       subcommand
         .setName("list")
         .setDescription("List all of the phrases Frank responds Snarkily to")
+        .addNumberOption((option) =>
+          option.setName("page").setRequired(true).setDescription("Page Number")
+        )
     ),
 
   async set(ctx, trigger, response) {
@@ -42,24 +45,33 @@ module.exports = {
     });
   },
 
-  async list(ctx) {
+  async list(ctx, page) {
     var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
-    const embed = new EmbedBuilder().setTitle("Frank Snarks");
-    let message = ""
-    for (const snark of configFile.frankSnarks) {
-      // embed.addFields({
-      //   name: `Trigger: \`${snark.trigger}\``,
-      //   value: `Response: \`${
-      //     snark.response
-      //   }\`\nCreator: <@${snark.creator}>`,
-      //   inline: false,
-      // });
-      message += `**Trigger: \`${snark.trigger}\`**\n
-                  Response: \`${snark.response}\`\n
-                  Creator: <@${snark.creator}>\n\n\n`
+    if (page <= Math.ceil(configFile.frankSnarks.length / 20)) {
+      const embed = new EmbedBuilder().setTitle(
+        `Frank Snarks: Page ${page}/${Math.ceil(
+          configFile.frankSnarks.length / 20
+        )}`
+      );
+      for (const snark of configFile.frankSnarks.slice(
+        page * 20 - 20,
+        page * 20
+      )) {
+        embed.addFields({
+          name: `Trigger: \`${snark.trigger}\``,
+          value: `Response: \`${snark.response}\`\nCreator: <@${snark.creator}>`,
+          inline: false,
+        });
+      }
+      await ctx.reply({ embeds: [embed] });
+    } else {
+      ctx.reply({
+        content: `Theres only ${Math.ceil(
+          configFile.frankSnarks.length / 20
+        )} Pages`,
+        ephemeral: true,
+      });
     }
-    embed.setDescription(message)
-    await ctx.reply({ embeds: [embed] });
   },
 
   async execute(ctx) {
@@ -71,7 +83,7 @@ module.exports = {
         ctx.options.getString("response")
       );
     } else if (subcommand === "list") {
-      await this.list(ctx);
+      await this.list(ctx, ctx.options.getNumber("page"));
     }
   },
 };
