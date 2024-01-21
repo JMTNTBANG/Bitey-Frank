@@ -45,15 +45,20 @@ module.exports = {
   async list(ctx) {
     var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
     const embed = new EmbedBuilder().setTitle("Frank Snarks");
+    let message = ""
     for (const snark of configFile.frankSnarks) {
-      embed.addFields({
-        name: `Trigger: \`${snark.trigger}\``,
-        value: `Response: \`${
-          snark.response
-        }\`\nCreator: ${ctx.client.users.cache.get(snark.creator)}`,
-        inline: false,
-      });
+      // embed.addFields({
+      //   name: `Trigger: \`${snark.trigger}\``,
+      //   value: `Response: \`${
+      //     snark.response
+      //   }\`\nCreator: <@${snark.creator}>`,
+      //   inline: false,
+      // });
+      message += `**Trigger: \`${snark.trigger}\`**\n
+                  Response: \`${snark.response}\`\n
+                  Creator: <@${snark.creator}>\n\n\n`
     }
+    embed.setDescription(message)
     await ctx.reply({ embeds: [embed] });
   },
 

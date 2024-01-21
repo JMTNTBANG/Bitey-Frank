@@ -127,13 +127,13 @@ for (const folder of commandFolders) {
     }
   }
 }
+console.log("Commands Loaded!")
 
 // Client Events
 frank.on(Events.ClientReady, (ctx) => {
   console.log(`Logged in as ${ctx.user.tag}`);
   frank.user.setActivity({
-    name: "my stinky poos",
-    type: ActivityType.Watching,
+    name: "FRANK.JS BETA",
   });
   const time1 = calcTime("+10.5");
   const time2 = calcTime("+10.5");
@@ -143,12 +143,14 @@ frank.on(Events.ClientReady, (ctx) => {
   setTimeout(function () {
     setInterval(aussie_clock, 60_000);
   }, time2.getTime() - time1.getTime());
-  birthdays();
-  setInterval(birthdays, 60_000);
+  console.log("Ready!")
+  // birthdays();
+  // setInterval(birthdays, 60_000);
 });
 
 frank.on(Events.InteractionCreate, async (ctx) => {
   const command = ctx.client.commands.get(ctx.commandName);
+  if (command == null) return;
   await command.execute(ctx);
 });
 
@@ -161,7 +163,7 @@ frank.on(Events.MessageCreate, async (ctx) => {
       var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
       let isSnark = false;
       for (const snark of configFile.frankSnarks) {
-        if (ctx.content.includes(snark.trigger)) {
+        if (ctx.content.toLowerCase().includes(snark.trigger)) {
           isSnark = true;
           ctx.channel.sendTyping();
           await sleep((ctx.content.length * 1000) / 5);

@@ -35,7 +35,7 @@ module.exports = {
       yyyy = 100;
     }
     var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
-    const birthday = new Date(yyyy, mm-1, dd);
+    const birthday = new Date(yyyy, mm - 1, dd);
     configFile.birthdays[ctx.user.id] = {
       timestamp: birthday.valueOf(),
       last_announced: 0,
@@ -67,15 +67,20 @@ module.exports = {
     const embed = new EmbedBuilder().setTitle("Birthdays");
     for (const birthday in configFile.birthdays) {
       const bday = new Date(configFile.birthdays[birthday].timestamp);
+      let user = await ctx.client.users.fetch(birthday);
       if (bday.getFullYear() == 100) {
         embed.addFields({
-          name: ctx.client.users.cache.get(birthday).displayName,
-          value: `${bday.getMonth()+1}/${bday.getDate()}`,
+          name: user.displayName,
+          value: `${bday.getMonth() + 1}/${bday.getDate()}`,
+          inline: true,
         });
       } else {
         embed.addFields({
-          name: ctx.client.users.cache.get(birthday).displayName,
-          value: `${bday.getMonth()+1}/${bday.getDate()}/${bday.getFullYear()}`,
+          name: user.displayName,
+          value: `${
+            bday.getMonth() + 1
+          }/${bday.getDate()}/${bday.getFullYear()}`,
+          inline: true,
         });
       }
     }
