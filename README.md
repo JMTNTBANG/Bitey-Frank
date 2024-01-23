@@ -17,26 +17,20 @@ In order to make the bot function, you will need a discord bot token (If you do 
 Next create a `config.json` file to the top of the directory, then paste the following inside the file:
 ```json
 {
-    "clientId": "CLIENT ID",
-    "token": "DISCORD BOT TOKEN"
+  "guildId": "Main Guild ID",
+  "clientId": "Client ID (Found in Dev Portal)",
+  "token": "Discord Bot Token",
+  "specialChannels": {
+    "youtube_ping": "YouTube Ping Channel ID"
+  },
+  "frankSnarks": [],
+  "birthdays": {}
 }
 ```
 
 ## Development
 
 If you would like to create your own server for testing, this template of the Garbage Stream Server is available **[Here](https://discord.new/wBSWQw9dgMfV)**
-
-## Development Optional Extras
-
-For the snarky messages that Frank sends to work you will need a `snarks.csv` file at the top of the Frank directory. The first line of the file will need to include the following:
-```bash
-Trigger,Response,User
-```
-Here is an example of a "snark command" that will need to be added into the file:
-
-```bash
-<trigger>,<response>,<user>
-```
 
 ## FAQs
 
