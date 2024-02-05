@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { createCanvas, registerFont } = require("canvas");
-const { token, guildId, specialChannels } = require("../config.json");
+const { token, guildId, specialChannels } = require("./config.json");
 const {
   Client,
   Collection,
@@ -40,7 +40,7 @@ function calcTime(offset) {
   return nd;
 }
 function aussie_clock() {
-  registerFont("../fixedsys.ttf", { family: "FixedSys" });
+  registerFont("./assets/fonts/fixedsys.ttf", { family: "FixedSys" });
   const width = 1920;
   const height = 1080;
   const picture = createCanvas(width, height);
@@ -71,7 +71,7 @@ function aussie_clock() {
     .setBanner(picture.toBuffer("image/png"), "Aussie Clock Update");
 }
 function birthdays() {
-  var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
+  var configFile = JSON.parse(fs.readFileSync("./src/config.json").toString());
   const todaysBirthdays = [];
   for (const birthday in configFile.birthdays) {
     const birthDate = new Date(configFile.birthdays[birthday].timestamp);
@@ -105,12 +105,12 @@ function birthdays() {
     configFile.birthdays[birthday].last_announced = new Date(
       Date.now()
     ).valueOf();
-    fs.writeFileSync("../config.json", JSON.stringify(configFile, "", 2));
+    fs.writeFileSync("./src/config.json", JSON.stringify(configFile, "", 2));
   });
 }
 
 const assets = fs
-  .readdirSync("../assets/")
+  .readdirSync("./assets/images/")
   .filter((file) => file.endsWith(".png") || file.endsWith(".gif"));
 module.exports = { assets };
 
@@ -170,7 +170,7 @@ frank.on(Events.MessageCreate, async (ctx) => {
     ctx.content.includes(`<@${frank.user.id}>`)
   ) {
     if (ctx.author.bot == false) {
-      var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
+      var configFile = JSON.parse(fs.readFileSync("./config.json").toString());
       let isSnark = false;
       for (const snark of configFile.frankSnarks) {
         if (ctx.content.toLowerCase().includes(snark.trigger)) {

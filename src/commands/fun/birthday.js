@@ -34,13 +34,13 @@ module.exports = {
     if (yyyy == null) {
       yyyy = 100;
     }
-    var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
+    var configFile = JSON.parse(fs.readFileSync("./config.json").toString());
     const birthday = new Date(yyyy, mm - 1, dd);
     configFile.birthdays[ctx.user.id] = {
       timestamp: birthday.valueOf(),
       last_announced: 0,
     };
-    fs.writeFileSync("../config.json", JSON.stringify(configFile, "", 2));
+    fs.writeFileSync("./config.json", JSON.stringify(configFile, "", 2));
     if (yyyy == 100) {
       await ctx.reply({
         content: `Frank will now Celebrate you on \`${mm}/${dd}\``,
@@ -54,16 +54,16 @@ module.exports = {
     }
   },
   async remove(ctx) {
-    var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
+    var configFile = JSON.parse(fs.readFileSync("./config.json").toString());
     delete configFile.birthdays[ctx.user.id];
-    fs.writeFileSync("../config.json", JSON.stringify(configFile, "", 2));
+    fs.writeFileSync("./config.json", JSON.stringify(configFile, "", 2));
     await ctx.reply({
       content: "Frank will no longer Celebrate you",
       ephemeral: true,
     });
   },
   async list(ctx) {
-    var configFile = JSON.parse(fs.readFileSync("../config.json").toString());
+    var configFile = JSON.parse(fs.readFileSync("./config.json").toString());
     const embed = new EmbedBuilder().setTitle("Birthdays");
     for (const birthday in configFile.birthdays) {
       const bday = new Date(configFile.birthdays[birthday].timestamp);
