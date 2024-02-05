@@ -4,7 +4,8 @@
   "description": "The official mascot of the unofficial Discord server of the Garbage Stream.",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "node ./src/index.js",
+    "reload_commands": "node ./src/reload-commands.js"
   },
   "repository": {
     "type": "git",
