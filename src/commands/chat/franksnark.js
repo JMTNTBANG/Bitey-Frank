@@ -32,13 +32,13 @@ module.exports = {
     ),
 
   async set(ctx, trigger, response) {
-    var configFile = JSON.parse(fs.readFileSync("./config.json").toString());
+    var configFile = JSON.parse(fs.readFileSync("./src/config.json").toString());
     configFile.frankSnarks.push({
       trigger: trigger,
       response: response,
       creator: ctx.user.id,
     });
-    fs.writeFileSync("./config.json", JSON.stringify(configFile, "", 2));
+    fs.writeFileSync("./src/config.json", JSON.stringify(configFile, "", 2));
     await ctx.reply({
       content: `Frank will now respond to \`${trigger}\` with \`${response}\``,
       ephemeral: true,
@@ -46,7 +46,7 @@ module.exports = {
   },
 
   async list(ctx, page) {
-    var configFile = JSON.parse(fs.readFileSync("./config.json").toString());
+    var configFile = JSON.parse(fs.readFileSync("./src/config.json").toString());
     if (page <= Math.ceil(configFile.frankSnarks.length / 20)) {
       const embed = new EmbedBuilder().setTitle(
         `Frank Snarks: Page ${page}/${Math.ceil(

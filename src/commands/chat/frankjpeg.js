@@ -37,12 +37,12 @@ module.exports = {
     ),
 
   async num(ctx, num) {
-    let picture = path.join(__dirname, "../../../assets", assets[num]);
+    let picture = path.join(__dirname, "../../../assets/images", assets[num]);
     await ctx.reply({ files: [{ attachment: picture }] });
   },
 
   async name(ctx, name) {
-    let picture = path.join(__dirname, "../../../assets", name);
+    let picture = path.join(__dirname, "../../../assets/images", name);
     await ctx.reply({ files: [{ attachment: picture }] });
   },
 

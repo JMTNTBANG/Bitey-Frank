@@ -10,7 +10,7 @@ module.exports = {
   async execute(ctx) {
     let picture = path.join(
       __dirname,
-      "../../../assets",
+      "../../../assets/images",
       assets[Math.floor(Math.random() * assets.length)]
     );
     await ctx.reply({ files: [{ attachment: picture }] });
