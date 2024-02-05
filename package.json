@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "deploy": "node ./src/index.js",
-    "reload_commands": "node ./src/reload-commands.js"
+    "reload_commands": "node ./src/reload-commands.js",
+    "deploy_loops": "python3 ./src/python-loops.py"
   },
   "repository": {
     "type": "git",

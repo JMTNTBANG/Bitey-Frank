@@ -1,5 +1,5 @@
-config.json
-birthdays.json
-snarks.csv
 node_modules
+
+src/config.json
 src/clock.png
+src/youtube.json
