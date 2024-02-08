@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "type": "node-terminal",
+            "name": "Run Script: deploy",
+            "request": "launch",
+            "command": "npm run deploy",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node-terminal",
+            "name": "Run Script: reload_commands",
+            "request": "launch",
+            "command": "npm run reload_commands",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node-terminal",
+            "name": "Run Script: deploy_loops",
+            "request": "launch",
+            "command": "npm run deploy_loops",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
