@@ -21,6 +21,7 @@
   "dependencies": {
     "canvas": "^2.11.2",
     "discord.js": "^14.14.1",
+    "patreon": "^0.4.1",
     "prompt-sync": "^4.2.0"
   }
 }
