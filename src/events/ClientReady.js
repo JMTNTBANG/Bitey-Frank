@@ -1,7 +1,10 @@
-const fs = require("fs")
+const fs = require("fs");
 const { Events } = require("discord.js");
-const { guildId, specialChannels } = require("../config.json");
+const { guildId, specialChannels, patreonToken, defaultStatus } = require("../config.json");
 const { createCanvas, registerFont } = require("canvas");
+const { patreon } = require("patreon");
+const { defaultMaxListeners } = require("events");
+const patreonClient = patreon(patreonToken);
 
 function calcTime(offset) {
   var d = new Date();
@@ -81,13 +84,40 @@ function birthdays(ctx) {
   });
 }
 
+function patronsInStatus(ctx) {
+  setInterval(function () {
+  const statuses = [defaultStatus];
+  patreonClient("/current_user/campaigns").then(async ({ store }) => {
+    const campaign = store
+      .findAll("campaign")
+      .map((campaign) => campaign.serialize());
+    patreonClient(
+      `/campaigns/${campaign[0].data.id}/pledges?include=patron.null`
+    ).then(async ({ store }) => {
+      const pledges = store
+        .findAll("campaign")
+        .map((pledges) => pledges.serialize());
+      if (pledges.included) {
+        pledges.included.forEach((pledge) => {
+          statuses.push(`Thanks ${pledge.attributes.full_name}!`);
+        });
+      }
+    });
+  });
+    statuses.forEach((status) => {
+      setTimeout(function () {
+        ctx.user.setActivity({
+          name: status,
+        });
+      }, 10_000);
+    });
+  }, 10_000);
+}
+
 module.exports = {
   name: Events.ClientReady,
   async execute(ctx) {
     console.log(`Logged in as ${ctx.user.tag}`);
-    ctx.user.setActivity({
-      name: "FRANK.JS BETA",
-    });
     const time1 = calcTime("+10.5");
     const time2 = calcTime("+10.5");
     time2.setSeconds(0);
@@ -102,6 +132,7 @@ module.exports = {
     setInterval(function () {
       birthdays(ctx);
     }, 60_000);
+    patronsInStatus(ctx);
     console.log("Ready!");
   },
 };
