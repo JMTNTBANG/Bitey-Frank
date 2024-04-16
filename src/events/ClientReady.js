@@ -107,8 +107,8 @@ module.exports = {
   name: Events.ClientReady,
   async execute(ctx) {
     console.log(`Logged in as ${ctx.user.tag}`);
-    const time1 = calcTime("+10.5");
-    const time2 = calcTime("+10.5");
+    const time1 = new Date();
+    const time2 = new Date();
     time2.setSeconds(0);
     time2.setMinutes(time2.getMinutes() + 1);
     aussie_clock(ctx);
