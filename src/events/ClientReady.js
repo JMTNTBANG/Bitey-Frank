@@ -6,13 +6,6 @@ const { patreon } = require("patreon");
 const { defaultMaxListeners } = require("events");
 const patreonClient = patreon(patreonToken);
 
-function calcTime(offset) {
-  var d = new Date();
-  var utc = d.getTime() + d.getTimezoneOffset() * 60000;
-  var nd = new Date(utc + 3600000 * offset);
-  return nd;
-}
-
 function aussie_clock(ctx) {
   registerFont("./assets/fonts/fixedsys.ttf", { family: "FixedSys" });
   const width = 1920;
@@ -24,22 +17,18 @@ function aussie_clock(ctx) {
   edit.font = '200pt "FixedSys"';
   edit.textAlign = "center";
   edit.textBaseline = "middle";
-  const time = calcTime("+10.5");
-  let hours = "";
-  let minutes = "";
-  if (time.getHours() > 9) {
-    hours = time.getHours();
-  } else {
-    hours = `0${time.getHours()}`;
-  }
-  if (time.getMinutes() > 9) {
-    minutes = time.getMinutes();
-  } else {
-    minutes = `0${time.getMinutes()}`;
-  }
-  const text = `${hours}:${minutes}`;
+  const time = new Date();
+  const timeText = time.toLocaleTimeString(
+    "en-AU",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Australia/Adelaide",
+      hourCycle: "h23"
+    }
+  );
   edit.fillStyle = "#fff";
-  edit.fillText(text, width / 2, height / 2);
+  edit.fillText(timeText, width / 2, height / 2);
   ctx.guilds.cache
     .get(guildId)
     .setBanner(picture.toBuffer("image/png"), "Aussie Clock Update");
