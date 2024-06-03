@@ -42,7 +42,11 @@ module.exports = {
   },
 
   async name(ctx, name) {
-    let picture = path.join(__dirname, "../../../assets/images", name);
+    let picNum = assets.indexOf(name);
+    if (picNum === -1) {
+      return;
+    }
+    let picture = path.join(__dirname, "../../../assets/images", assets[picNum]);
     await ctx.reply({ files: [{ attachment: picture }] });
   },
 
