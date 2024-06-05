@@ -65,11 +65,13 @@ def calc_wait_time(interval: float):
 
 
 async def yt_checker(channel_id):
-    channel = scrapetube.get_channel(channel_id)
+    channel = scrapetube.get_channel(channel_id, limit=1)
     latest_video = None
     for video in channel:
         latest_video = video
         break
+    if latest_video is None:
+        return
     video = Video(latest_video["videoId"])
     channel_cache = json.loads(open("./src/youtube.json", "r").read())
     if video.channel_id not in channel_cache:
