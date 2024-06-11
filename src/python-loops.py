@@ -130,6 +130,6 @@ async def on_ready():
         await goob_schedule_upd()
         for channel in channels:
             await (yt_checker(channel))
-        await asyncio.sleep(calc_wait_time(300))
+            await asyncio.sleep(calc_wait_time(60))
 
 client.run(config.token)
