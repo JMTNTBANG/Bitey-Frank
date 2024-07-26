@@ -85,7 +85,8 @@ async def yt_checker(channel_id):
             f'Uploaded <t:{int(video.published_at.timestamp())}:R>\n' \
             f'{video.url}'
         channel = await client.fetch_channel(config.youtubePingChannel)
-        await channel.send(response)
+        message = await channel.send(response)
+        await message.create_thread(name=video.title, auto_archive_duration=4320)
         print(f"Sent {video.channel_title} ping!")
 
 
