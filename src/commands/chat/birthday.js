@@ -70,13 +70,13 @@ module.exports = {
       let user = await ctx.client.users.fetch(birthday);
       if (bday.getFullYear() == 100) {
         embed.addFields({
-          name: user.displayName,
+          name: user.nickname,
           value: `${bday.getMonth() + 1}/${bday.getDate()}`,
           inline: true,
         });
       } else {
         embed.addFields({
-          name: user.displayName,
+          name: user.nickname,
           value: `${
             bday.getMonth() + 1
           }/${bday.getDate()}/${bday.getFullYear()}`,
