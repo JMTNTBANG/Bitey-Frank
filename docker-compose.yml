@@ -1,0 +1,10 @@
+services:
+  Bitey-Frank:
+    image: biteyfrank:debug
+    volumes:
+      - config:/app/src/config
+    network_mode: bridge
+    restart: always
+
+volumes:
+  config:

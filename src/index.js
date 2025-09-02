@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { token, specialChannels } = require("./config.json");
+const { token, specialChannels } = require("./config/config.json");
 const {
   Client,
   Collection,

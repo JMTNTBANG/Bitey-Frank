@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { specialChannels } = require("../../config.json")
+const { specialChannels } = require("../../config/config.json")
 const {
   SlashCommandBuilder,
   ActionRowBuilder,

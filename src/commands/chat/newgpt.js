@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const GEMINI_API_KEY = require("../../config.json").geminiToken;
+const GEMINI_API_KEY = require("../../config/config.json").geminiToken;
 
 module.exports = {
   data: new SlashCommandBuilder()

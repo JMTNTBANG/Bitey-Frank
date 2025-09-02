@@ -1,41 +1,41 @@
 const fs = require("fs");
 const { Events } = require("discord.js");
-const { guildId, specialChannels, patreonToken, defaultStatus } = require("../config.json");
-const { createCanvas, registerFont } = require("canvas");
+const { guildId, specialChannels, patreonToken, defaultStatus } = require("../config/config.json");
+// const { createCanvas, registerFont } = require("canvas");
 const { patreon } = require("patreon");
 const { defaultMaxListeners } = require("events");
 const patreonClient = patreon(patreonToken);
 
-function aussie_clock(ctx) {
-  registerFont("./assets/fonts/fixedsys.ttf", { family: "FixedSys" });
-  const width = 1920;
-  const height = 1080;
-  const picture = createCanvas(width, height);
-  const edit = picture.getContext("2d");
-  edit.fillStyle = "#000";
-  edit.fillRect(0, 0, width, height);
-  edit.font = '200pt "FixedSys"';
-  edit.textAlign = "center";
-  edit.textBaseline = "middle";
-  const time = new Date();
-  const timeText = time.toLocaleTimeString(
-    "en-AU",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "Australia/Adelaide",
-      hourCycle: "h23"
-    }
-  );
-  edit.fillStyle = "#fff";
-  edit.fillText(timeText, width / 2, height / 2);
-  ctx.guilds.cache
-    .get(guildId)
-    .setBanner(picture.toBuffer("image/png"), "Aussie Clock Update");
-}
+// function aussie_clock(ctx) {
+//   registerFont("./assets/fonts/fixedsys.ttf", { family: "FixedSys" });
+//   const width = 1920;
+//   const height = 1080;
+//   const picture = createCanvas(width, height);
+//   const edit = picture.getContext("2d");
+//   edit.fillStyle = "#000";
+//   edit.fillRect(0, 0, width, height);
+//   edit.font = '200pt "FixedSys"';
+//   edit.textAlign = "center";
+//   edit.textBaseline = "middle";
+//   const time = new Date();
+//   const timeText = time.toLocaleTimeString(
+//     "en-AU",
+//     {
+//       hour: "2-digit",
+//       minute: "2-digit",
+//       timeZone: "Australia/Adelaide",
+//       hourCycle: "h23"
+//     }
+//   );
+//   edit.fillStyle = "#fff";
+//   edit.fillText(timeText, width / 2, height / 2);
+//   ctx.guilds.cache
+//     .get(guildId)
+//     .setBanner(picture.toBuffer("image/png"), "Aussie Clock Update");
+// }
 
 function birthdays(ctx) {
-  var configFile = JSON.parse(fs.readFileSync("./src/config.json").toString());
+  var configFile = JSON.parse(fs.readFileSync("./src/config/config.json").toString());
   const todaysBirthdays = [];
   for (const birthday in configFile.birthdays) {
     const birthDate = new Date(configFile.birthdays[birthday].timestamp);
@@ -69,7 +69,7 @@ function birthdays(ctx) {
     configFile.birthdays[birthday].last_announced = new Date(
       Date.now()
     ).valueOf();
-    fs.writeFileSync("./src/config.json", JSON.stringify(configFile, "", 2));
+    fs.writeFileSync("./src/config/config.json", JSON.stringify(configFile, "", 2));
   });
 }
 
@@ -111,12 +111,12 @@ module.exports = {
     const time2 = new Date();
     time2.setSeconds(0);
     time2.setMinutes(time2.getMinutes() + 1);
-    aussie_clock(ctx);
-    setTimeout(function () {
-      setInterval(function () {
-        aussie_clock(ctx);
-      }, 60_000);
-    }, time2.getTime() - time1.getTime());
+    // aussie_clock(ctx);
+    // setTimeout(function () {
+    //   setInterval(function () {
+    //     aussie_clock(ctx);
+    //   }, 60_000);
+    // }, time2.getTime() - time1.getTime());
     birthdays(ctx);
     setInterval(function () {
       birthdays(ctx);

@@ -32,7 +32,7 @@ channels: list = [
 
 class Config:
     def __init__(self):
-        with open("./src/config.json", "r") as raw_config:
+        with open("./src/config/config.json", "r") as raw_config:
             raw_config = json.loads(raw_config.read())
             self.token = raw_config["token"]
             self.ytapitoken = raw_config["ytApiToken"]

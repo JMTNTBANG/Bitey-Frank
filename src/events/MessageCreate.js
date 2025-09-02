@@ -24,7 +24,7 @@ module.exports = {
     ) {
       if (ctx.author.bot == false) {
         var configFile = JSON.parse(
-          fs.readFileSync("./src/config.json").toString()
+          fs.readFileSync("./src/config/config.json").toString()
         );
         let isSnark = false;
         for (const snark of configFile.frankSnarks) {

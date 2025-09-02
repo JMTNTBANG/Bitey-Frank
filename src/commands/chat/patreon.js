@@ -1,4 +1,4 @@
-const { patreonToken } = require("../../config.json");
+const { patreonToken } = require("../../config/config.json");
 const { patreon } = require("patreon");
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const patreonClient = patreon(patreonToken);
