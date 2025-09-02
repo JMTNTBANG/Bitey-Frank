@@ -1,6 +1,6 @@
 services:
   Bitey-Frank:
-    image: biteyfrank:debug
+    image: biteyfrank:latest
     volumes:
       - config:/app/src/config
     network_mode: bridge
